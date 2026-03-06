@@ -111,26 +111,40 @@ API Docs     → http://localhost:8000/docs
 ## 📁 Project Structure
 ```
 linksutra/
+├── .github/
+│   └── workflows/          # CI/CD GitHub Actions
 ├── backend/
-│   ├── main.py           # FastAPI app entry point
-│   ├── database.py       # Database connection
-│   ├── models.py         # SQLAlchemy models
-│   ├── schemas.py        # Pydantic schemas
-│   └── routes/
-│       ├── auth.py       # Login / Register
-│       ├── links.py      # Links CRUD
-│       └── analytics.py  # Click tracking
+│   ├── routes/
+│   │   ├── auth.py         # Login / Register
+│   │   ├── links.py        # Links CRUD
+│   │   └── analytics.py    # Click tracking
+│   ├── database.py         # Database connection
+│   ├── main.py             # FastAPI app entry point
+│   ├── models.py           # SQLAlchemy models
+│   └── schemas.py          # Pydantic schemas
+├── docs/
+│   ├── api.md              # API reference
+│   ├── installation.md     # Setup guide
+│   └── usage.md            # Usage guide
 ├── frontend/
-│   ├── src/
-│   │   ├── pages/        # React pages
-│   │   └── components/   # Reusable components
-│   └── public/
-│       ├── profile.html  # Public profile page
-│       └── themes/       # CSS themes
-├── docs/                 # Documentation
+│   ├── public/
+│   │   ├── themes/
+│   │   │   ├── minimal.css
+│   │   │   ├── dark.css
+│   │   │   └── colorful.css
+│   │   └── profile.html    # Public profile page
+│   └── src/
+│       ├── api/            # API client
+│       ├── components/
+│       │   └── LinkCard.jsx
+│       └── pages/
+│           ├── Dashboard.jsx
+│           └── Login.jsx
+├── .gitignore
 ├── CONTRIBUTING.md
 ├── LICENSE
-└── README.md
+├── README.md
+└── requirements.txt
 ```
 
 ---
