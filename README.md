@@ -177,7 +177,7 @@ See [LICENSE](LICENSE) for full details.
 
 ---
 
-## 👨‍💻 Built With ❤️ for FOSS Hack 2025
+## 👨‍💻 Built With ❤️ for FOSS Hack 2026
 
 > *"Your link page. Your data. Your rules."*
 
