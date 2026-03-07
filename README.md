@@ -52,7 +52,6 @@ LinkSutra fixes all of that.
 - 🌍 ActivityPub / Fediverse federation
 - 🔀 A/B testing for links
 - 🔌 Plugin block ecosystem
-- 📱 Mobile app
 
 ---
 
