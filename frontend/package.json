@@ -1,10 +1,19 @@
 {
-  "name": "frontend",
+  "name": "linksutra-frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "LinkSutra - Link in Bio Platform",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.0"
   },
   "author": "divyanshi",
   "license": "ISC"
