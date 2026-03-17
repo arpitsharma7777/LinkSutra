@@ -1,14 +1,26 @@
 import Sidebar from "../components/Sidebar";
 import ProfileCard from "../components/ProfileCard";
 import LinkList from "../components/LinkList";
+import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
-function Dashboard() {
+
+function Dashboard({ setToken }) {
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setToken(null);
+    navigate("/");
+  }
+
   return (
     <div className="dashboard">
 
       <Sidebar />
 
       <div className="main">
+
+        <button className="logoutBtn" onClick={handleLogout}>Logout</button>
 
         <ProfileCard />
 
