@@ -19,13 +19,9 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 # ─── HELPER FUNCTIONS ────────────────────────────────────────────────────────
 
 def hash_password(password: str) -> str:
-    # bcrypt has a 72-byte limit, truncate if necessary
-    password = password[:72]
     return pwd_context.hash(password)
 
 def verify_password(plain: str, hashed: str) -> bool:
-    # bcrypt has a 72-byte limit, truncate if necessary
-    plain = plain[:72]
     return pwd_context.verify(plain, hashed)
 
 def create_access_token(data: dict) -> str:
