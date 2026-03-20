@@ -1,36 +1,147 @@
 .dashboard{
 display:flex;
 min-height:100vh;
-background:linear-gradient(135deg,#5a2cff,#ff5fa2);
+min-width: 100vw;
 color:white;
+background-image: url("/bg2.png");
+background-size:contain;
+background-position: center;;
+ 
 }
 
-.sidebar{
-width:250px;
-padding:20px;
-background:rgba(0,0,0,0.2);
-}
 
 .main{
+
 flex:1;
-padding:40px;
+display:row;
+padding-top:150px;
 }
 
+.Full-main{
+    
+    padding:50px;
+    margin-top:10px;
+}
+
+
+
 .profileCard{
-background:white;
+background:transparent;
 color:black;
 padding:20px;
 border-radius:10px;
 text-align:center;
 margin-bottom:20px;
+border: 2px solid whitesmoke;
 }
 
 .linkCard{
-background:white;
+background:transparent;
+border: 2px solid whitesmoke;
 color:black;
 display:flex;
 justify-content:space-between;
 padding:15px;
 margin-top:10px;
 border-radius:10px;
+}
+.start{
+     background-color:#fc7ce9;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    color: black;
+}
+p{
+    font-weight: bold;
+}
+h2{
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0,229,255,0.6);
+    font-size: 30px;
+}
+h1{
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0,229,255,0.6);
+    font-size: 40px;
+}
+/* Container */
+.card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Card common style */
+.card {
+  background: linear-gradient(145deg, #6a0dad, #9b59b6);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  color: #fff;
+  text-align: center;
+  padding:5px;
+  width: 500px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
+
+
+/* Card text */
+.card-title {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
+
+.card-subtitle {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+/* YouTube Card color */
+.youtube-card {
+  background: linear-gradient(145deg, #ff0000, #ff6666);
+}
+
+/* Instagram Card color */
+.instagram-card {
+  background: linear-gradient(145deg, #f09433, #bc1888);
+}
+
+/* Profile Card color */
+.profile-card {
+  background: linear-gradient(145deg, #6a0dad, #9b59b6);
+}
+
+.addLinkInput {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  width: 50%;
+  margin-right: 10px;
+}
+.addBtn{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #34f27d;
+    color: black;
+    width: 100px;
+}
+.btn{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #00e5ff;
+    color: black;
+    margin: 10px;
 }

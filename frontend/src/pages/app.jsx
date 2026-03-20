@@ -3,6 +3,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Login";
 import Dashboard from "./Dashboard";
 
+function App(){
+    return (
+        <Dashboard />
+    )
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
 
