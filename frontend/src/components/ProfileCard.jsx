@@ -2,7 +2,7 @@ function ProfileCard() {
   return (
     <div className="profileCard">
 
-      <img src="https://i.pravatar.cc/100" alt="profile" />
+      <img src="" alt="profile" />
 
       <h3>Alex Morgan</h3>
 
