@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import Login from "./pages/Login";
 import { BrowserRouter } from "react-router-dom";
 import App from './pages/app';
+import './styles/globals.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

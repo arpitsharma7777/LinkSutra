@@ -1,12 +1,14 @@
-function ProfileCard() {
+function ProfileCard({ user }) {
+  if (!user) return <div className="profileCard">Loading profile...</div>;
+
   return (
     <div className="profileCard">
 
-      <img src="" alt="profile" />
+      <img src={user.avatar_url || "https://i.pravatar.cc/100"} alt="profile" />
 
-      <h3>Alex Morgan</h3>
+      <h3>{user.display_name || user.username}</h3>
 
-      <p>Content Creator</p>
+      <p>{user.bio || "No bio added"}</p>
 
       <button>Copy Link</button>
 
