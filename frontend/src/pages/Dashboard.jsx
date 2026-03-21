@@ -66,10 +66,15 @@ function Dashboard({ setToken }) {
     }
 
     try {
+      console.log("Deleting link with ID:", linkId);
       await deleteLink(token, linkId);
-      setLinks(links.filter(link => link.id !== linkId));
+
+      const updatedLinks = links.filter(link => link.id !== linkId);
+      setLinks(updatedLinks);
+      console.log("Link deleted successfully. Remaining links:", updatedLinks);
       alert("Link deleted successfully!");
     } catch (err) {
+      console.error("Delete error:", err);
       alert("Error deleting link: " + err.message);
     }
   }

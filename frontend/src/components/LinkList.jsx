@@ -52,6 +52,14 @@ function LinkList({ links = [], onAddLink, onDeleteLink, onEditLink }) {
     setEditUrl('');
   }
 
+  // Handle deleting a link with confirmation
+  function handleDeleteClick(linkId, title) {
+    const confirm = window.confirm(`Are you sure you want to delete "${title}"?`);
+    if (confirm) {
+      onDeleteLink(linkId);
+    }
+  }
+
   return (
     <div className="card-container">
       {/* Add New Link Form */}
@@ -134,7 +142,7 @@ function LinkList({ links = [], onAddLink, onDeleteLink, onEditLink }) {
                   </button>
                   <button
                     className="btn"
-                    onClick={() => onDeleteLink(link.id)}
+                    onClick={() => handleDeleteClick(link.id, link.title)}
                     style={{ backgroundColor: '#ff6b6b' }}
                   >
                     Delete
