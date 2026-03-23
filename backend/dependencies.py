@@ -1,12 +1,15 @@
+import os
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
-
+from dotenv import load_dotenv
 from database import get_db
 from models import User
 
-SECRET_KEY = "linksutra-secret-key-change-in-production"
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY", "linksutra-secret-key-change-in-production")
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
