@@ -1,9 +1,55 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getTotalClicks, getDailyAnalytics, getLinkAnalytics, getTopLink } from '../api/auth';
 import '../styles/Analytics.css';
 
 const Analytics = ({ setToken }) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [totalClicks, setTotalClicks] = useState(0);
+  const [dailyData, setDailyData] = useState([]);
+  const [linkAnalytics, setLinkAnalytics] = useState([]);
+  const [topLink, setTopLink] = useState(null);
+  const [avgPerDay, setAvgPerDay] = useState(0);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        setLoading(true);
+
+        // Fetch all analytics data
+        const [totalRes, dailyRes, linksRes, topRes] = await Promise.all([
+          getTotalClicks(token),
+          getDailyAnalytics(token, 7),
+          getLinkAnalytics(token),
+          getTopLink(token),
+        ]);
+
+        setTotalClicks(totalRes.total_clicks || 0);
+        setDailyData(dailyRes || []);
+        setLinkAnalytics(linksRes || []);
+        setTopLink(topRes);
+
+        // Calculate average per day
+        if (dailyRes && dailyRes.length > 0) {
+          const totalFromDaily = dailyRes.reduce((sum, day) => sum + (day.clicks || 0), 0);
+          setAvgPerDay(Math.ceil(totalFromDaily / dailyRes.length));
+        }
+      } catch (err) {
+        console.error('Failed to fetch analytics:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, [navigate]);
 
   function handleLogout() {
     localStorage.removeItem("token");
@@ -46,19 +92,19 @@ const Analytics = ({ setToken }) => {
         {/* Top Metrics Row */}
         <section className="metrics-row">
           <div className="metric-card">
-            <span className="metric-value">2,405</span>
+            <span className="metric-value">{loading ? '...' : totalClicks.toLocaleString()}</span>
             <span className="metric-change">TOTAL CLICKS</span>
           </div>
           <div className="metric-card divider">
-            <span className="metric-value">1,200</span>
+            <span className="metric-value">{loading ? '...' : Math.ceil(totalClicks * 0.5)}</span>
             <span className="metric-change">UNIQUE VISITORS</span>
           </div>
           <div className="metric-card divider">
-            <span className="metric-value">/github</span>
+            <span className="metric-value">{loading ? '...' : topLink?.title || 'N/A'}</span>
             <span className="metric-change">TOP LINKS</span>
           </div>
           <div className="metric-card divider">
-            <span className="metric-value">342</span>
+            <span className="metric-value">{loading ? '...' : avgPerDay}</span>
             <span className="metric-change">AVG PER DAY</span>
           </div>
         </section>
@@ -81,30 +127,26 @@ const Analytics = ({ setToken }) => {
         {/* Top Performing Destinations */}
         <section className="destinations-section">
           <h2>Top Performing Destinations</h2>
-          
-          <div className="dest-item">
-            <div className="dest-info">
-              <span>github.com/linksutra/core</span>
-              <span>842 Clicks</span>
-            </div>
-            <div className="progress-bar"><div className="progress" style={{width: '85%'}}></div></div>
-          </div>
 
-          <div className="dest-item">
-            <div className="dest-info">
-              <span>docs.linksutra.io/quickstart</span>
-              <span>612 Clicks</span>
-            </div>
-            <div className="progress-bar"><div className="progress" style={{width: '65%'}}></div></div>
-          </div>
-
-          <div className="dest-item">
-            <div className="dest-info">
-              <span>gumroad.com/l/linksutra-pro</span>
-              <span>405 Clicks</span>
-            </div>
-            <div className="progress-bar"><div className="progress" style={{width: '45%'}}></div></div>
-          </div>
+          {loading ? (
+            <p>Loading...</p>
+          ) : linkAnalytics && linkAnalytics.length > 0 ? (
+            linkAnalytics.slice(0, 5).map((link, index) => {
+              const maxClicks = linkAnalytics[0]?.click_count || 1;
+              const percentage = Math.round((link.click_count / maxClicks) * 100);
+              return (
+                <div key={link.link_id} className="dest-item">
+                  <div className="dest-info">
+                    <span title={link.url}>{link.title || link.url}</span>
+                    <span>{link.click_count} Clicks</span>
+                  </div>
+                  <div className="progress-bar"><div className="progress" style={{width: `${percentage}%`}}></div></div>
+                </div>
+              );
+            })
+          ) : (
+            <p>No data available yet.</p>
+          )}
         </section>
       </main>
     </div>

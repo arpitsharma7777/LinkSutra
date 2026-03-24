@@ -45,14 +45,14 @@ export async function getUserLinks(token) {
   return data;
 }
 
-export async function createLink(token, title, url) {
+export async function createLink(token, title, url, icon) {
   const res = await fetch(`${BASE_URL}/links`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ title, url }),
+    body: JSON.stringify({ title, url, icon }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.detail || "Failed to create link");
@@ -92,5 +92,46 @@ export async function getTotalClicks(token) {
   });
   const data = await res.json();
   if (!res.ok) return { total_clicks: 0 };
+  return data;
+}
+
+export async function getDailyAnalytics(token, days = 7) {
+  const res = await fetch(`${BASE_URL}/analytics/daily?days=${days}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  if (!res.ok) return [];
+  return data;
+}
+
+export async function getLinkAnalytics(token) {
+  const res = await fetch(`${BASE_URL}/analytics/links`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  if (!res.ok) return [];
+  return data;
+}
+
+export async function getTopLink(token) {
+  const res = await fetch(`${BASE_URL}/analytics/top-link`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  if (!res.ok) return null;
+  return data;
+}
+
+export async function updateUserProfile(token, updates) {
+  const res = await fetch(`${BASE_URL}/auth/me`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updates),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || "Failed to update profile");
   return data;
 }
