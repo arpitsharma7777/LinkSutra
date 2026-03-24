@@ -26,6 +26,22 @@
   color: #faf7f7;
   cursor: pointer;
   margin-bottom: 5px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+  background-color: #2a2a2a;
+  color: #f96a0a;
+}
+
+.nav-item.active {
+  background-color: #f96a0a;
+  color: white;
+}
+
+.nav-item.active:hover {
+  background-color: #e55a00;
 }
 
 

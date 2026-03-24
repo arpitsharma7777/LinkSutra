@@ -1,19 +1,39 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Analytics.css';
 
-const Analytics = () => {
+const Analytics = ({ setToken }) => {
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setToken(null);
+    navigate("/");
+  }
+
   return (
     <div className="analytics-container">
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="logo">LinkSutra</div>
         <nav>
-          <div className="nav-item">Links</div>
-          <div className="nav-item">Analytics</div>
+          <div className="nav-item" onClick={() => navigate('/dashboard')}>Links</div>
+          <div className="nav-item active" onClick={() => navigate('/analytics')}>Analytics</div>
           <div className="nav-item">Settings</div>
           <div className="nav-item">Support</div>
         </nav>
-        
+        <button className="logout-btn" onClick={handleLogout} style={{
+          marginTop: '20px',
+          width: '100%',
+          padding: '10px',
+          backgroundColor: '#ff6b6b',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer'
+        }}>
+          LOGOUT
+        </button>
       </aside>
 
       {/* Main Content */}

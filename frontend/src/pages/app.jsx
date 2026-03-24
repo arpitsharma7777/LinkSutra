@@ -10,13 +10,20 @@ function App() {
 
   return (
     <>
-  
-     <Routes>
-      <Route path="/Landing" element={<Landing/>}/>
-      <Route path="/Analytics" element={<Analytics/>}/>
-       <Route path="/" element={token ? <Navigate to="/dashboard" /> : <Login setToken={setToken} />} /> 
-      <Route path="/dashboard" element={token ? <Dashboard setToken={setToken} /> : <Navigate to="/" />} />
-    </Routes> 
+      <Routes>
+        {/* Landing page as home - no authentication required */}
+        <Route path="/" element={<Landing />} />
+
+        {/* Login page */}
+        <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <Login setToken={setToken} />} />
+
+        {/* Protected routes - require authentication */}
+        <Route path="/dashboard" element={token ? <Dashboard setToken={setToken} /> : <Navigate to="/login" />} />
+        <Route path="/analytics" element={token ? <Analytics setToken={setToken} /> : <Navigate to="/login" />} />
+
+        {/* Catch-all route - redirect to home */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </>
   );
 }

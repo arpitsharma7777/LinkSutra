@@ -177,8 +177,8 @@ function Dashboard({ setToken }) {
       <aside className="sidebar">
         <div className="logo">LinkSutra</div>
         <nav>
-          <div className="nav-item ">Links</div>
-          <div className="nav-item">Analytics</div>
+          <div className="nav-item active" onClick={() => navigate('/dashboard')}>Links</div>
+          <div className="nav-item" onClick={() => navigate('/analytics')}>Analytics</div>
           <div className="nav-item">Settings</div>
           <div className="nav-item">Support</div>
         </nav>
