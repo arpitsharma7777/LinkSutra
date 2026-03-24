@@ -6,18 +6,18 @@
   align-items: center;
   height: 100vh;
   width: 100%;
-  background-color:orangered;
+  background-color: #0a0a0a;
+  background-image: radial-gradient(#333 1px,transparent 1px);
+  background-size: 20px 20px;
   
 }
 
 .form-container {
-  background-color:transparent;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow:4px 4px 4px rgba(255, 255, 255, 0.5);
+  background-color:#1a1614;
+  padding: 40px;
+  border-radius: 20px;
   width: 300px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  
+  border: 1px solid whitesmoke;
 }
 
 .form-toggle {
@@ -27,16 +27,17 @@
 }
 .form-toggle button {
   width: 50%;
-  padding: 10px;
+  padding: 15px;
   background-color: #f3f3f3;
   border: none;
   cursor: pointer;
   font-size: 16px;
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
+  margin: 10px;
 }
 
 .form-toggle .active {
-  background-color: #033452;
+  background-color: #f07721;
   color: white;
 }
 
@@ -51,22 +52,23 @@
 
 .form input {
   padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
+  margin-bottom: 25px;
+  border: 2px solid #f96706;
   border-radius: 5px;
+  background-color: #562e11;
 }
 
 .form button {
   padding: 10px;
-  background-color:#033452;
+  background-color:#f07721;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius:5px;
   cursor: pointer;
 }
 
 .form a {
-  color: #033452;
+  color: #f07721;
   text-decoration: none;
   margin-bottom: 10px;
   text-align: right;
@@ -74,10 +76,11 @@
 
 .form p {
   text-align: center;
+  color: aliceblue;
 }
 .title{
   text-align: center;
-  color: white;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  color: #f07721;
+  margin-bottom: 50px;
+  text-shadow: 2px 2px 4px rgba(242, 80, 5, 0.5);
 }

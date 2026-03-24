@@ -5,11 +5,7 @@ function Navbar() {
     <nav className="navbar">
       <div className="logo">LinkSutra</div>
 
-      <ul className="nav-links">
-        <li>Login</li>
-        <li>Analytic</li>
-        <li>Profile</li>
-      </ul>
+      <button className="btn">GET STARTED</button>
     </nav>
   );
 }

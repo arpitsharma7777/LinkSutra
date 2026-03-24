@@ -14,14 +14,14 @@ function Hero() {
           self-hostable link-in-bio platform for developers.
         </p>
 
-        <button className="hero-btn">Get Started</button>
+        
       </div>
 
       <div className="hero-right">
         <div className="card">
           <div className="profile">
            
-            <h3>Alex Rivet</h3>
+            <h1>Alex Rivet</h1>
             <p>@alex_dev</p>
           </div>
 
