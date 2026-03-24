@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserLinks, createLink, updateLink, deleteLink } from "../api/auth";
 import "../styles/Dashboard.css";
@@ -10,6 +10,12 @@ function Dashboard({ setToken }) {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newUrl, setNewUrl] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editUrl, setEditUrl] = useState("");
 
   // Fetch user data and links on component mount
   useEffect(() => {
@@ -49,10 +55,31 @@ function Dashboard({ setToken }) {
     try {
       const newLink = await createLink(token, title, url);
       setLinks([...links, newLink]);
+      setNewTitle("");
+      setNewUrl("");
+      setShowAddForm(false);
       alert("Link added successfully!");
     } catch (err) {
       alert("Error adding link: " + err.message);
     }
+  }
+
+  function handleAddFormOpenClick() {
+    setShowAddForm(true);
+  }
+
+  function handleAddFormCloseClick() {
+    setShowAddForm(false);
+    setNewTitle("");
+    setNewUrl("");
+  }
+
+  function handleAddFormSubmit() {
+    if (!newTitle.trim() || !newUrl.trim()) {
+      alert("Please enter both title and URL");
+      return;
+    }
+    handleAddLink(newTitle, newUrl);
   }
 
   // Handle deleting a link
@@ -90,9 +117,39 @@ function Dashboard({ setToken }) {
     try {
       const updatedLink = await updateLink(token, linkId, { title, url });
       setLinks(links.map(link => link.id === linkId ? updatedLink : link));
+      setEditingId(null);
+      setEditTitle("");
+      setEditUrl("");
       alert("Link updated successfully!");
     } catch (err) {
       alert("Error updating link: " + err.message);
+    }
+  }
+
+  function handleEditClick(linkId, title, url) {
+    setEditingId(linkId);
+    setEditTitle(title);
+    setEditUrl(url);
+  }
+
+  function handleSaveEdit(linkId) {
+    if (!editTitle.trim() || !editUrl.trim()) {
+      alert("Please enter both title and URL");
+      return;
+    }
+    handleEditLink(linkId, editTitle, editUrl);
+  }
+
+  function handleCancelEdit() {
+    setEditingId(null);
+    setEditTitle("");
+    setEditUrl("");
+  }
+
+  function handleDeleteClick(linkId) {
+    const confirm = window.confirm("Are you sure you want to delete this link?");
+    if (confirm) {
+      handleDeleteLink(linkId);
     }
   }
 
@@ -134,71 +191,156 @@ function Dashboard({ setToken }) {
             <span className="workspace-label">WORKSPACE</span>
             <h1 className="title">Manage Links</h1>
           </div>
-          <button className="add-link-btn">+ Add link</button>
+          <button className="add-link-btn" onClick={handleAddFormOpenClick}>+ Add link</button>
         </div>
+
+        {/* Add Link Form */}
+        {showAddForm && (
+          <div style={{
+            backgroundColor: '#1e1e1e',
+            padding: '20px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            border: '1px solid #f95306'
+          }}>
+            <h3 style={{ marginTop: 0 }}>Add New Link</h3>
+            <input
+              type="text"
+              placeholder="Link Title (e.g., LinkedIn)"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px',
+                marginBottom: '10px',
+                backgroundColor: '#2a2a2a',
+                color: 'white',
+                border: '1px solid #444',
+                borderRadius: '6px'
+              }}
+            />
+            <input
+              type="text"
+              placeholder="Link URL (e.g., https://linkedin.com/in/yourprofile)"
+              value={newUrl}
+              onChange={(e) => setNewUrl(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px',
+                marginBottom: '10px',
+                backgroundColor: '#2a2a2a',
+                color: 'white',
+                border: '1px solid #444',
+                borderRadius: '6px'
+              }}
+            />
+            <button
+              className="edit-btn"
+              onClick={handleAddFormSubmit}
+              style={{ backgroundColor: '#34f27d', color: 'black', marginRight: '10px' }}
+            >
+              Add
+            </button>
+            <button
+              className="edit-btn"
+              onClick={handleAddFormCloseClick}
+              style={{ backgroundColor: '#ff6b6b' }}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
 
         <div className="links-list">
-          {/* Item 1 */}
-          <div className="link-card">
-            <div className="card-left">
-              <div className="img-box"></div>
-              <div className="text-info">
-                <h3>My Portfolio</h3>
-                <p>portfolio.dev</p>
-              </div>
-            </div>
-            <div className="card-right">
-              <button className="edit-btn">Edit</button>
-              <button className="delete-btn">Delete</button>
-            </div>
-          </div>
-
-          {/* Item 2 */}
-          <div className="link-card">
-            <div className="card-left">
-              <div className="img-box"></div>
-              <div className="text-info">
-                <h3>Open Source Projects</h3>
-                <p>github.com/dev/projects</p>
-              </div>
-            </div>
-            <div className="card-right">
-              <button className="edit-btn">Edit</button>
-              <button className="delete-btn">Delete</button>
-            </div>
-          </div>
-
-          {/* Item 3 */}
-          <div className="link-card">
-            <div className="card-left">
-              <div className="img-box"></div>
-              <div className="text-info">
-                <h3>Tech Blog</h3>
-                <p>medium.com/@devlog</p>
-              </div>
-            </div>
-            <div className="card-right">
-              <button className="edit-btn">Edit</button>
-              <button className="delete-btn">Delete</button>
-            </div>
-          </div>
-
-          {/* Item 4 */}
-          <div className="link-card">
-            <div className="card-left">
-              <div className="img-box"></div>
-              <div className="text-info">
-                <h3>Latest Workshop</h3>
-                <p>zoom.us/j/99283741</p>
-              </div>
-            </div>
-            <div className="card-right">
-              <button className="edit-btn">Edit</button>
-              <button className="delete-btn">Delete</button>
-            </div>
-          </div>
+          {links.length === 0 ? (
+            <p style={{ color: '#888', textAlign: 'center', padding: '40px' }}>
+              No links added yet. Click "+ Add link" to create your first link!
+            </p>
+          ) : (
+            links.map((link) => (
+              editingId === link.id ? (
+                // Edit Mode
+                <div key={link.id} className="link-card" style={{ border: '1px solid #34f27d' }}>
+                  <div className="card-left" style={{ flex: 1 }}>
+                    <div style={{ width: '100%' }}>
+                      <input
+                        type="text"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        placeholder="Title"
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          marginBottom: '8px',
+                          backgroundColor: '#2a2a2a',
+                          color: 'white',
+                          border: '1px solid #444',
+                          borderRadius: '4px'
+                        }}
+                      />
+                      <input
+                        type="text"
+                        value={editUrl}
+                        onChange={(e) => setEditUrl(e.target.value)}
+                        placeholder="URL"
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          backgroundColor: '#2a2a2a',
+                          color: 'white',
+                          border: '1px solid #444',
+                          borderRadius: '4px'
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="card-right">
+                    <button
+                      className="edit-btn"
+                      onClick={() => handleSaveEdit(link.id)}
+                      style={{ backgroundColor: '#34f27d', color: 'black', marginRight: '5px' }}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="edit-btn"
+                      onClick={handleCancelEdit}
+                      style={{ backgroundColor: '#ff6b6b' }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // View Mode
+                <div key={link.id} className="link-card">
+                  <div className="card-left">
+                    <div className="img-box"></div>
+                    <div className="text-info">
+                      <h3>{link.title}</h3>
+                      <p>{link.url}</p>
+                    </div>
+                  </div>
+                  <div className="card-right">
+                    <button
+                      className="edit-btn"
+                      onClick={() => handleEditClick(link.id, link.title, link.url)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDeleteClick(link.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )
+            ))
+          )}
         </div>
-        <button className="btn">LOGOUT</button>
+        <button className="btn" onClick={handleLogout} style={{ marginTop: '20px' }}>LOGOUT</button>
       </main>
     </div>
   );
