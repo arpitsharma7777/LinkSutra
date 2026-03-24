@@ -1,147 +1,118 @@
-.dashboard{
-display:flex;
-min-height:100vh;
-min-width: 100vw;
-color:white;
-background-image: url("/bg2.png");
-background-size:contain;
-background-position: center;;
- 
-}
-
-
-.main{
-
-flex:1;
-display:row;
-padding-top:150px;
-}
-
-.Full-main{
-    
-    padding:50px;
-    margin-top:10px;
-}
-
-
-
-.profileCard{
-background:transparent;
-color:black;
-padding:20px;
-border-radius:10px;
-text-align:center;
-margin-bottom:20px;
-border: 2px solid whitesmoke;
-}
-
-.linkCard{
-background:transparent;
-border: 2px solid whitesmoke;
-color:black;
-display:flex;
-justify-content:space-between;
-padding:15px;
-margin-top:10px;
-border-radius:10px;
-}
-.start{
-     background-color:#fc7ce9;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
-    color: black;
-}
-p{
-    font-weight: bold;
-}
-h2{
-    color: #ffffff;
-    text-shadow: 0 0 10px rgba(0,229,255,0.6);
-    font-size: 30px;
-}
-h1{
-    color: #ffffff;
-    text-shadow: 0 0 10px rgba(0,229,255,0.6);
-    font-size: 40px;
-}
-/* Container */
-.card-container {
+.dashboard-container {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 20px;
+  background-color: #0a0a0a;
+  background-image: radial-gradient(#333 1px,transparent 1px);
+  background-size: 20px 20px;
+  color: white;
+  min-height: 100vh;
+  font-family: sans-serif;
 }
 
-/* Card common style */
-.card {
-  background: linear-gradient(145deg, #6a0dad, #9b59b6);
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  color: #fff;
-  text-align: center;
-  padding:5px;
-  width: 500px;
-  transition: transform 0.3s, box-shadow 0.3s;
+.sidebar {
+  width: 220px;
+  padding: 30px 20px;
+  border-right: 1px solid #333;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #f96a0a;
+  margin-bottom: 40px;
+}
+
+.nav-item {
+  padding: 12px;
+  color: #faf7f7;
   cursor: pointer;
-}
-
-/* Hover effect */
-.card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-}
-
-
-
-/* Card text */
-.card-title {
-  font-size: 1.2em;
   margin-bottom: 5px;
 }
 
-.card-subtitle {
-  font-size: 0.9em;
-  opacity: 0.8;
+
+
+.main-content {
+  flex: 1;
+  padding: 50px 80px;
 }
 
-/* YouTube Card color */
-.youtube-card {
-  background: linear-gradient(145deg, #ff0000, #ff6666);
+.workspace-label {
+  color: #ff8a65;
+  font-size: 11px;
+  letter-spacing: 1px;
 }
 
-/* Instagram Card color */
-.instagram-card {
-  background: linear-gradient(145deg, #f09433, #bc1888);
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
 }
 
-/* Profile Card color */
-.profile-card {
-  background: linear-gradient(145deg, #6a0dad, #9b59b6);
+.title {
+  font-family: serif;
+  font-size: 48px;
+  margin: 5px 0 0 0;
 }
 
-.addLinkInput {
-  padding: 10px;
-  border-radius: 5px;
+.add-link-btn {
+  background-color: #fb6f05;
   border: none;
-  width: 50%;
-  margin-right: 10px;
+  padding:20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
 }
-.addBtn{
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #34f27d;
-    color: black;
-    width: 100px;
+
+.link-card {
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border: 1px solid #f95306;
+}
+
+.card-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.img-box {
+  width: 45px;
+  height: 45px;
+  background-color: #ddd;
+  border-radius: 8px;
+}
+
+.text-info h3 { margin: 0; font-size: 18px; }
+.text-info p { margin: 4px 0 0 0; color: #888; font-size: 14px; }
+
+.card-right {
+  display: flex;
+  gap: 10px;
+}
+
+button.edit-btn, button.delete-btn {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+button.delete-btn:hover {
+  background: #ef4444;
+}
+
+button.edit-btn:hover {
+  background: #444;
 }
 .btn{
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #00e5ff;
-    color: black;
-    margin: 10px;
+  padding: 10px;
+  background-color: #f96a0a;
 }
