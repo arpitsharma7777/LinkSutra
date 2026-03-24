@@ -1,14 +1,3 @@
-body {
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  background-image: url("/bg.png");
-    background-size: cover;
-    background-position:unset;
-}
 
 .container {
   display: flex;
@@ -17,6 +6,7 @@ body {
   align-items: center;
   height: 100vh;
   width: 100%;
+  background-color:orangered;
   
 }
 
