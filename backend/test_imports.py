@@ -6,28 +6,28 @@ Test script to verify imports work correctly
 try:
     print("Testing FastAPI import...")
     from fastapi import FastAPI
-    print("✓ FastAPI imported successfully")
+    print("OK - FastAPI imported successfully")
 
     print("Testing database import...")
     from database import engine, Base
-    print("✓ Database imported successfully")
+    print("OK - Database imported successfully")
 
     print("Testing routes import...")
     from routes import auth, links, analytics
-    print("✓ All routes imported successfully")
+    print("OK - All routes imported successfully")
 
     print("Testing main app creation...")
     app = FastAPI(title="LinkSutra Test", version="1.0.0")
-    print("✓ FastAPI app created successfully")
+    print("OK - FastAPI app created successfully")
 
-    print("\n✅ All imports successful! The app should work.")
+    print("\nSUCCESS - All imports work!")
 
 except ImportError as e:
-    print(f"❌ Import error: {e}")
+    print(f"IMPORT ERROR: {e}")
     import sys
     print(f"Python path: {sys.path}")
 
 except Exception as e:
-    print(f"❌ Other error: {e}")
+    print(f"OTHER ERROR: {e}")
     import traceback
     traceback.print_exc()
