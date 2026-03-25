@@ -6,4 +6,5 @@ node_modules/
 *.db
 dist/
 *.sqlite
+.venv/
 venv/
