@@ -1,12 +1,23 @@
 import os
-from fastapi import FastAPI
+import sys
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 from routes import auth
 from routes import links
 from routes import analytics
 
-Base.metadata.create_all(bind=engine)
+# Initialize database with error handling
+try:
+    Base.metadata.create_all(bind=engine)
+    print("Database tables created successfully")
+except Exception as e:
+    print(f"Database initialization error: {e}")
+    # Don't exit in production, let Railway handle restarts
+    if os.getenv("RAILWAY_ENVIRONMENT"):
+        print("Continuing despite database error in Railway environment")
+    else:
+        sys.exit(1)
 
 app = FastAPI(title="LinkSutra API", version="1.0.0")
 
@@ -30,4 +41,25 @@ def root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "service": "LinkSutra API"}
+    """Health check endpoint with database connectivity test"""
+    try:
+        # Test database connection
+        from database import SessionLocal
+        db = SessionLocal()
+        db.execute("SELECT 1")
+        db.close()
+
+        return {
+            "status": "healthy",
+            "service": "LinkSutra API",
+            "database": "connected",
+            "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "service": "LinkSutra API",
+            "database": "disconnected",
+            "error": str(e),
+            "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
+        }
