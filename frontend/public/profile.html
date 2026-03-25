@@ -128,9 +128,9 @@
     }
 
     .avatar {
-      width: 88px; height: 88px;
+      width: 120px; height: 120px;
       border-radius: 50%;
-      border: 2px solid var(--avatar-border);
+      border: 3px solid var(--avatar-border);
       object-fit: cover;
       background: var(--accent-soft);
       display: block;
@@ -138,15 +138,15 @@
     }
 
     .avatar-placeholder {
-      width: 88px; height: 88px;
+      width: 120px; height: 120px;
       border-radius: 50%;
-      border: 2px solid var(--avatar-border);
+      border: 3px solid var(--avatar-border);
       background: var(--accent-soft);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'DM Serif Display', serif;
-      font-size: 32px;
+      font-size: 48px;
       color: var(--text-secondary);
       transition: border-color 0.35s, background 0.35s;
     }
@@ -177,6 +177,88 @@
       margin: 0 auto;
       font-weight: 300;
     }
+
+    /* ── Social Icons Row ─────────────────────────────────── */
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+
+    .social-icon-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--btn-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.35s;
+      text-decoration: none;
+    }
+
+    .social-icon-btn:hover {
+      transform: scale(1.1);
+      border-color: var(--accent);
+    }
+
+    /* ── Action Buttons Grid ──────────────────────────────── */
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 32px;
+      margin-bottom: 24px;
+    }
+
+    .action-btn {
+      padding: 16px 12px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.18s ease, opacity 0.18s ease, background 0.35s;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .action-btn:active {
+      transform: translateY(0px);
+    }
+
+    .action-btn-icon {
+      font-size: 24px;
+    }
+
+    .action-btn-text {
+      font-size: 13px;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* ── Stagger animation on action buttons ──────────────── */
+    .action-buttons .action-btn:nth-child(1) { animation-delay: 0.15s; }
+    .action-buttons .action-btn:nth-child(2) { animation-delay: 0.20s; }
+    .action-buttons .action-btn:nth-child(3) { animation-delay: 0.25s; }
+    .action-buttons .action-btn:nth-child(4) { animation-delay: 0.30s; }
 
     /* ── Divider ─────────────────────────────────────────── */
     .divider {
@@ -301,7 +383,7 @@
     }
 
     .skeleton-avatar {
-      width: 88px; height: 88px;
+      width: 120px; height: 120px;
       border-radius: 50%;
       margin: 0 auto 18px;
     }
@@ -433,6 +515,12 @@
           <div class="skeleton skeleton-line" style="width:80px; height:10px"></div>
           <div class="skeleton skeleton-line" style="width:220px; height:10px; margin-top:14px"></div>
         </div>
+        <div style="display: flex; justify-content: center; gap: 12px; margin: 24px 0;">
+          ${[1,2,3,4].map(() => `<div class="skeleton" style="width: 48px; height: 48px; border-radius: 50%;"></div>`).join('')}
+        </div>
+        <div class="action-buttons">
+          ${[1,2,3,4].map(() => `<div class="skeleton skeleton-link"></div>`).join('')}
+        </div>
         <div class="divider"></div>
         <div class="links-list">
           ${[1,2,3].map(() => `<div class="skeleton skeleton-link"></div>`).join('')}
@@ -445,7 +533,37 @@
         ? `<img class="avatar" src="${data.avatar_url}" alt="${data.display_name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"  /><div class="avatar-placeholder" style="display:none">${(data.display_name || data.username)[0].toUpperCase()}</div>`
         : `<div class="avatar-placeholder">${(data.display_name || data.username)[0].toUpperCase()}</div>`;
 
-      const linksHtml = data.links && data.links.length > 0
+      // Separate social links from regular links
+      const socialLinks = data.social_links && data.social_links.length > 0
+        ? data.social_links
+        : [];
+
+      const actionButtons = data.action_buttons && data.action_buttons.length > 0
+        ? data.action_buttons
+        : [];
+
+      const socialIconsHtml = socialLinks.length > 0
+        ? `<div class="social-icons">
+            ${socialLinks.map(link => `
+              <a class="social-icon-btn" href="${link.url}" target="_blank" rel="noopener noreferrer" title="${link.title}">
+                ${getIcon(link.title, link.url)}
+              </a>
+            `).join('')}
+          </div>`
+        : '';
+
+      const actionButtonsHtml = actionButtons.length > 0
+        ? `<div class="action-buttons">
+            ${actionButtons.map(btn => `
+              <a class="action-btn" href="${btn.url}" target="_blank" rel="noopener noreferrer">
+                <div class="action-btn-icon">${getIcon(btn.title, btn.url)}</div>
+                <div class="action-btn-text">${btn.title}</div>
+              </a>
+            `).join('')}
+          </div>`
+        : '';
+
+      const regularLinks = data.links && data.links.length > 0
         ? data.links.map(link => `
             <div class="link-item" onclick="trackClick(${link.id}, '${link.url}')">
               <div class="link-left">
@@ -468,9 +586,11 @@
           <h1 class="display-name">${data.display_name || data.username}</h1>
           <p class="username-tag">@${data.username}</p>
           ${data.bio ? `<p class="bio">${data.bio}</p>` : ''}
+          ${socialIconsHtml}
         </div>
+        ${actionButtonsHtml}
         <div class="divider"></div>
-        <div class="links-list">${linksHtml}</div>
+        <div class="links-list">${regularLinks}</div>
         <div class="footer">
           <a href="/" title="Powered by LinkSutra">
             <span class="footer-dot"></span>
