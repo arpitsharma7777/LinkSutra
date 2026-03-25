@@ -448,7 +448,9 @@
   </div>
 
   <script>
-    const API = 'http://127.0.0.1:8000';
+    const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://127.0.0.1:8000'
+      : `${window.location.protocol}//${window.location.hostname.includes('railway.app') ? window.location.hostname.replace('frontend', 'backend') : 'your-backend-domain.railway.app'}`;
 
     // ── Get username from URL ──────────────────────────────
     // URL format: /profile.html?u=username  OR  /:username (if server configured)
