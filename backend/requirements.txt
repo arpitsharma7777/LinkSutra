@@ -9,6 +9,7 @@ psycopg2-binary==2.9.7
 # Authentication & Security
 bcrypt==4.0.1
 python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
 
 # Utilities
 python-dotenv==1.2.2
