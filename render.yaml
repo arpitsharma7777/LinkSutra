@@ -32,7 +32,7 @@ services:
       npm run build
     publishPath: ./frontend/dist
     routes:
-      - path: /
+      - path: /*
         match: none
         dest: /index.html
     envVars:
