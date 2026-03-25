@@ -53,4 +53,4 @@
 .dest-item { background: #1c1c1c; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
 .dest-info { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; }
 .progress-bar { background: #333; height: 6px; border-radius: 3px; }
-.progress { background:  #f76504;quotes:;; height: 100%; border-radius: 3px; }
+.progress { background:  #f76504;quotes: 100px; height: 100%; border-radius: 3px; }
