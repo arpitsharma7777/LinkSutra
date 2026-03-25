@@ -31,6 +31,10 @@ services:
       npm install
       npm run build
     publishPath: ./frontend/dist
+    routes:
+      - path: /
+        match: none
+        dest: /index.html
     envVars:
       - key: VITE_API_URL
         value: https://linksutra-backend.onrender.com
