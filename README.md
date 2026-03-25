@@ -19,7 +19,7 @@
 
 ## 🤔 What is LinkSutra?
 
-**Sutra** (Sanskrit: सूत्र) means *thread* or *link* — and that's exactly what LinkSutra is.
+
 
 LinkSutra is a free, open-source alternative to Linktree that gives creators, developers, and privacy-conscious users **true ownership** of their online presence.
 
@@ -38,20 +38,17 @@ LinkSutra fixes all of that.
 ### Core Features
 - 🔗 **Unlimited Links** — add, edit, reorder, and manage links freely
 - 🎨 **3 Beautiful Themes** — minimal, dark, and colorful
-- 📊 **Privacy-First Analytics** — server-side click tracking, zero cookies, GDPR compliant
+- 📊 **Privacy-First Analytics** — server-side click tracking, zero cookies
 - 👤 **Custom Profile** — bio, avatar, display name
 - 📦 **Full Data Export** — download your entire profile as JSON anytime
-- 🌐 **Custom Domain Support** — point your own domain, automatic TLS
+
 
 ### Developer Features
 - ⚡ **REST API** — manage links programmatically
-- 🐳 **Self-Hostable** — run on your own server with Docker
+- 🐳 **Self-Hostable** — run on your own server 
 - 🔓 **No Vendor Lock-in** — your data, your server, your rules
 
-### Coming Soon
-- 🌍 ActivityPub / Fediverse federation
-- 🔀 A/B testing for links
-- 🔌 Plugin block ecosystem
+
 
 ---
 
@@ -62,10 +59,10 @@ LinkSutra fixes all of that.
 | Backend | FastAPI (Python) |
 | Database | SQLite (dev) / PostgreSQL (prod) |
 | ORM | SQLAlchemy |
-| Frontend | React + Vite + TailwindCSS |
+| Frontend | React + Vite 
 | Public Profile | HTML + CSS + Vanilla JS |
 | Auth | JWT (python-jose) |
-| Deployment | Railway / Render / Docker |
+
 
 ---
 
@@ -98,55 +95,12 @@ npm install
 npm run dev
 ```
 
-**4. Open in browser**
-```
-Backend API  → http://localhost:8000
-Frontend     → http://localhost:5173
-API Docs     → http://localhost:8000/docs
-```
 
 ---
 
-## 📁 Project Structure
-```
-linksutra/
-├── .github/
-│   └── workflows/          # CI/CD GitHub Actions
-├── backend/
-│   ├── routes/
-│   │   ├── auth.py         # Login / Register
-│   │   ├── links.py        # Links CRUD
-│   │   └── analytics.py    # Click tracking
-│   ├── database.py         # Database connection
-│   ├── main.py             # FastAPI app entry point
-│   ├── models.py           # SQLAlchemy models
-│   └── schemas.py          # Pydantic schemas
-├── docs/
-│   ├── api.md              # API reference
-│   ├── installation.md     # Setup guide
-│   └── usage.md            # Usage guide
-├── frontend/
-│   ├── public/
-│   │   ├── themes/
-│   │   │   ├── minimal.css
-│   │   │   ├── dark.css
-│   │   │   └── colorful.css
-│   │   └── profile.html    # Public profile page
-│   └── src/
-│       ├── api/            # API client
-│       ├── components/
-│       │   └── LinkCard.jsx
-│       └── pages/
-│           ├── Dashboard.jsx
-│           └── Login.jsx
-├── .gitignore
-├── CONTRIBUTING.md
-├── LICENSE
-├── README.md
-└── requirements.txt
-```
 
----
+
+
 
 ## 🤝 Contributing
 
@@ -162,20 +116,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines.
 
 ---
 
-## 📊 Roadmap
 
-- [x] Project structure setup
-- [ ] User authentication (register/login)
-- [ ] Links CRUD API
-- [ ] Public profile page
-- [ ] Admin dashboard
-- [ ] Privacy analytics
-- [ ] Data export
-- [ ] Custom domain support
-- [ ] Docker deployment
-- [ ] ActivityPub federation
-
----
 
 ## 📄 License
 
@@ -195,5 +136,6 @@ See [LICENSE](LICENSE) for full details.
 > *"Your link page. Your data. Your rules."*
 
 <div align="center">
-Made with ❤️ in India 🇮🇳
+MADE BY  TEAM Hackfinity ∞
+
 </div>
