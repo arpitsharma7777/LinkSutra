@@ -1,0 +1,15 @@
+# Railway deployment configuration
+[build]
+builder = "nixpacks"
+
+[build.nixPacks]
+# Ensure Python environment is set up correctly
+pythonVersion = "3.11"
+
+[deploy]
+# Use absolute path and ensure proper working directory
+startCommand = "python server.py"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on-failure"
+restartPolicyMaxRetries = 3
