@@ -1,10 +1,14 @@
+import { useToast } from "./ToastNotification";
+
 function ProfileCard({ user }) {
+  const { showSuccess } = useToast();
+
   if (!user) return null;
 
   function handleCopyLink() {
     const profileLink = `${window.location.origin}/profile/${user.username}`;
     navigator.clipboard.writeText(profileLink);
-    alert("Profile link copied to clipboard!");
+    showSuccess("Profile link copied to clipboard!");
   }
 
   return (

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserLinks, createLink, updateLink, deleteLink } from "../api/auth";
+import { useToast } from "../components/ToastNotification";
+import { useModal } from "../components/Modal";
 import "../styles/Dashboard.css";
 
 function Dashboard({ setToken }) {
   const navigate = useNavigate();
+  const { showSuccess, showError, showWarning } = useToast();
+  const { showConfirmModal } = useModal();
   const [user, setUser] = useState(null);
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +55,7 @@ function Dashboard({ setToken }) {
   async function handleAddLink(title, url, icon) {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Session expired. Please login again.");
+      showError("Session expired. Please login again.");
       navigate("/login");
       return;
     }
@@ -63,9 +67,9 @@ function Dashboard({ setToken }) {
       setNewUrl("");
       setNewIcon("🔗");
       setShowAddForm(false);
-      alert("Link added successfully!");
+      showSuccess("Link added successfully!");
     } catch (err) {
-      alert("Error adding link: " + err.message);
+      showError("Error adding link: " + err.message);
     }
   }
 
@@ -82,7 +86,7 @@ function Dashboard({ setToken }) {
 
   function handleAddFormSubmit() {
     if (!newTitle.trim() || !newUrl.trim()) {
-      alert("Please enter both title and URL");
+      showWarning("Please enter both title and URL");
       return;
     }
     handleAddLink(newTitle, newUrl, newIcon);
@@ -92,7 +96,7 @@ function Dashboard({ setToken }) {
   async function handleDeleteLink(linkId) {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Session expired. Please login again.");
+      showError("Session expired. Please login again.");
       navigate("/login");
       return;
     }
@@ -104,10 +108,10 @@ function Dashboard({ setToken }) {
       const updatedLinks = links.filter(link => link.id !== linkId);
       setLinks(updatedLinks);
       console.log("Link deleted successfully. Remaining links:", updatedLinks);
-      alert("Link deleted successfully!");
+      showSuccess("Link deleted successfully!");
     } catch (err) {
       console.error("Delete error:", err);
-      alert("Error deleting link: " + err.message);
+      showError("Error deleting link: " + err.message);
     }
   }
 
@@ -115,7 +119,7 @@ function Dashboard({ setToken }) {
   async function handleEditLink(linkId, title, url, icon) {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Session expired. Please login again.");
+      showError("Session expired. Please login again.");
       navigate("/login");
       return;
     }
@@ -127,9 +131,9 @@ function Dashboard({ setToken }) {
       setEditTitle("");
       setEditUrl("");
       setEditIcon("");
-      alert("Link updated successfully!");
+      showSuccess("Link updated successfully!");
     } catch (err) {
-      alert("Error updating link: " + err.message);
+      showError("Error updating link: " + err.message);
     }
   }
 
@@ -137,7 +141,7 @@ function Dashboard({ setToken }) {
   async function handleToggleLink(linkId, currentStatus) {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Session expired. Please login again.");
+      showError("Session expired. Please login again.");
       navigate("/login");
       return;
     }
@@ -146,7 +150,7 @@ function Dashboard({ setToken }) {
       const updatedLink = await updateLink(token, linkId, { is_active: !currentStatus });
       setLinks(links.map(link => link.id === linkId ? updatedLink : link));
     } catch (err) {
-      alert("Error updating link: " + err.message);
+      showError("Error updating link: " + err.message);
     }
   }
 
@@ -159,7 +163,7 @@ function Dashboard({ setToken }) {
 
   function handleSaveEdit(linkId) {
     if (!editTitle.trim() || !editUrl.trim()) {
-      alert("Please enter both title and URL");
+      showWarning("Please enter both title and URL");
       return;
     }
     handleEditLink(linkId, editTitle, editUrl, editIcon);
@@ -172,9 +176,16 @@ function Dashboard({ setToken }) {
     setEditIcon("");
   }
 
-  function handleDeleteClick(linkId) {
-    const confirm = window.confirm("Are you sure you want to delete this link?");
-    if (confirm) {
+  async function handleDeleteClick(linkId) {
+    const confirmed = await showConfirmModal({
+      title: "Delete Link",
+      message: "Are you sure you want to delete this link? This action cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      confirmButtonType: "danger"
+    });
+
+    if (confirmed) {
       handleDeleteLink(linkId);
     }
   }
@@ -183,7 +194,7 @@ function Dashboard({ setToken }) {
     if (user) {
       const publicURL = `${window.location.origin}/profile/${user.username}`;
       navigator.clipboard.writeText(publicURL);
-      alert("Public URL copied to clipboard!");
+      showSuccess("Public URL copied to clipboard!");
     }
   }
 
@@ -319,7 +330,7 @@ function Dashboard({ setToken }) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    alert("HTML file exported successfully!");
+    showSuccess("HTML file exported successfully!");
   }
 
   function handleExportJSON() {
@@ -347,7 +358,7 @@ function Dashboard({ setToken }) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    alert("JSON file exported successfully!");
+    showSuccess("JSON file exported successfully!");
   }
 
   function handleLogout() {
