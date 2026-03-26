@@ -191,12 +191,14 @@ function Dashboard({ setToken }) {
   }
 
   function handleCopyPublicURL() {
-    if (user) {
-      const publicURL = `${window.location.origin}/profile.html/${user.username}`;
-      navigator.clipboard.writeText(publicURL);
-      showSuccess("Public URL copied to clipboard!");
-    }
+  if (user) {
+    // React route nahi, actual static file ka URL
+    const publicURL = `${window.location.origin}/profile.html?u=${user.username}`;
+    navigator.clipboard.writeText(publicURL);
+    showSuccess("Public URL copied to clipboard!");
   }
+}
+
 
   function handleExportHTML() {
     if (!user) return;
