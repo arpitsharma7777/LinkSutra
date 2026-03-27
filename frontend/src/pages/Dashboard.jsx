@@ -42,7 +42,7 @@ function Dashboard({ setToken }) {
         setLinks(linksData);
       } catch (err) {
         setError(err.message);
-        console.error("Error fetching dashboard data:", err);
+        // Error already captured in error state
       } finally {
         setLoading(false);
       }
@@ -102,15 +102,12 @@ function Dashboard({ setToken }) {
     }
 
     try {
-      console.log("Deleting link with ID:", linkId);
       await deleteLink(token, linkId);
 
       const updatedLinks = links.filter(link => link.id !== linkId);
       setLinks(updatedLinks);
-      console.log("Link deleted successfully. Remaining links:", updatedLinks);
       showSuccess("Link deleted successfully!");
     } catch (err) {
-      console.error("Delete error:", err);
       showError("Error deleting link: " + err.message);
     }
   }
