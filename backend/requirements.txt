@@ -1,4 +1,4 @@
-��# Core FastAPI dependencies
+# Core FastAPI dependencies
 fastapi==0.135.1
 uvicorn[standard]==0.42.0
 
@@ -24,4 +24,4 @@ email-validator==2.3.0
 python-multipart==0.0.22
 
 # Runtime dependencies
-typing-extensions==4.15.
+typing-extensions==4.15.0
