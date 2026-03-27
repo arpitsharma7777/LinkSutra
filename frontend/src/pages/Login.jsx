@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser, registerUser } from "../api/auth";
-import "../styles/Login.css";
+import "../styles/login.css";
 
 export default function Login({ setToken }) {
   const [isLogin, setIsLogin] = useState(true);

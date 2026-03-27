@@ -450,7 +450,9 @@
   <script>
     const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://127.0.0.1:8000'
-      : `${window.location.protocol}//${window.location.hostname.includes('railway.app') ? window.location.hostname.replace('frontend', 'backend') : 'your-backend-domain.railway.app'}`;
+      : window.location.hostname.includes('onrender.com')
+        ? window.location.hostname.replace('frontend', 'backend').replace(/^/, `${window.location.protocol}//`)
+        : 'https://linksutra-backend.onrender.com';
 
     // ── Get username from URL ──────────────────────────────
     // URL format: /profile.html?u=username  OR  /:username (if server configured)

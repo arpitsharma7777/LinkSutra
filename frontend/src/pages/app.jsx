@@ -23,7 +23,7 @@ function App() {
           <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <Login setToken={setToken} />} />
 
           {/* Public profile page - no authentication required */}
-          <Route path="/profile/:username" element={<PublicProfile />} />
+          <Route path="/profile.html/:username" element={<PublicProfile />} />
 
           {/* Protected routes - require authentication */}
           <Route path="/dashboard" element={token ? <Dashboard setToken={setToken} /> : <Navigate to="/login" />} />

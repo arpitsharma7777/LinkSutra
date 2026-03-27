@@ -1,65 +1,98 @@
-import os
-import sys
+"""
+LinkSutra API - Main application entry point
+Clean, optimized FastAPI application for Render deployment
+"""
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-from routes import auth
-from routes import links
-from routes import analytics
+from config import Config
+from utils.database import DatabaseHealth, get_database_connection_info
+from routes import auth, links, analytics
 
-# Initialize database with error handling
-try:
-    Base.metadata.create_all(bind=engine)
-    print("Database tables created successfully")
-except Exception as e:
-    print(f"Database initialization error: {e}")
-    # Don't exit in production, let Railway handle restarts
-    if os.getenv("RAILWAY_ENVIRONMENT"):
-        print("Continuing despite database error in Railway environment")
-    else:
-        sys.exit(1)
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-app = FastAPI(title="LinkSutra API", version="1.0.0")
+def create_app() -> FastAPI:
+    """Create and configure FastAPI application"""
 
-# Environment-aware CORS configuration
-allow_origins = os.getenv("CORS_ORIGINS", "*").split(",")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[origin.strip() for origin in allow_origins],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    # Initialize database tables
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables initialized successfully")
+    except Exception as e:
+        logger.error(f"Database initialization failed: {e}")
+        if Config.is_production():
+            logger.warning("Continuing startup despite database error in production")
+        else:
+            logger.error("Database initialization required for development")
+            raise
 
-app.include_router(auth.router)
-app.include_router(links.router)
-app.include_router(analytics.router)
+    # Create FastAPI app
+    app = FastAPI(
+        title=Config.APP_NAME,
+        description=Config.APP_DESCRIPTION,
+        version=Config.VERSION
+    )
+
+    # Configure CORS (computed once at startup)
+    cors_origins = Config.get_cors_origins()
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    logger.info(f"CORS configured for origins: {cors_origins}")
+
+    # Include routers
+    app.include_router(auth.router)
+    app.include_router(links.router)
+    app.include_router(analytics.router)
+
+    return app
+
+# Create app instance
+app = create_app()
 
 @app.get("/")
-def root():
-    return {"message": "LinkSutra API is running 🔗"}
+async def root():
+    """Root endpoint - API status"""
+    return {
+        "message": "LinkSutra API is running 🔗",
+        "version": Config.VERSION,
+        "status": "healthy"
+    }
 
 @app.get("/health")
-def health_check():
-    """Health check endpoint with database connectivity test"""
+async def health_check():
+    """
+    Optimized health check endpoint.
+    Uses cached database status to avoid performance impact.
+    """
     try:
-        # Test database connection
-        from database import SessionLocal
-        db = SessionLocal()
-        db.execute("SELECT 1")
-        db.close()
+        # Use efficient health check that doesn't hit DB every time
+        db_healthy, db_status = DatabaseHealth.quick_health_check()
 
-        return {
-            "status": "healthy",
-            "service": "LinkSutra API",
-            "database": "connected",
-            "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
+        health_data = {
+            "status": "healthy" if db_healthy else "degraded",
+            "service": Config.APP_NAME,
+            "database": db_status,
+            "version": Config.VERSION
         }
+
+        # Add debug info in development
+        if not Config.is_production():
+            health_data["database_info"] = get_database_connection_info()
+
+        return health_data
+
     except Exception as e:
+        logger.error(f"Health check failed: {e}")
         return {
             "status": "unhealthy",
-            "service": "LinkSutra API",
-            "database": "disconnected",
-            "error": str(e),
-            "environment": os.getenv("RAILWAY_ENVIRONMENT", "development")
+            "service": Config.APP_NAME,
+            "error": "Health check failed"
         }
