@@ -72,7 +72,7 @@ const Analytics = ({ setToken }) => {
           marginTop: '20px',
           width: '100%',
           padding: '10px',
-          backgroundColor: '#ff6b6b',
+          backgroundColor: '#f77504',
           color: 'white',
           border: 'none',
           borderRadius: '6px',
@@ -95,15 +95,15 @@ const Analytics = ({ setToken }) => {
             <span className="metric-value">{loading ? '...' : totalClicks.toLocaleString()}</span>
             <span className="metric-change">TOTAL CLICKS</span>
           </div>
-          <div className="metric-card divider">
+          <div className="metric-card">
             <span className="metric-value">{loading ? '...' : Math.ceil(totalClicks * 0.5)}</span>
             <span className="metric-change">UNIQUE VISITORS</span>
           </div>
-          <div className="metric-card divider">
+          <div className="metric-card">
             <span className="metric-value">{loading ? '...' : topLink?.title || 'N/A'}</span>
             <span className="metric-change">TOP LINKS</span>
           </div>
-          <div className="metric-card divider">
+          <div className="metric-card">
             <span className="metric-value">{loading ? '...' : avgPerDay}</span>
             <span className="metric-change">AVG PER DAY</span>
           </div>
