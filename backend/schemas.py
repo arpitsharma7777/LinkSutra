@@ -1,15 +1,23 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, HttpUrl, field_validator
 from typing import Optional, List
 from datetime import datetime
+import re
 
 
 # ─── AUTH SCHEMAS ────────────────────────────────────────────────────────────
 
 class UserCreate(BaseModel):
-    username: str
+    username: str = Field(..., min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_-]+$")
     email: EmailStr
-    password: str
-    display_name: Optional[str] = None
+    password: str = Field(..., min_length=8, max_length=128)
+    display_name: Optional[str] = Field(None, max_length=100)
+    
+    @field_validator('username')
+    @classmethod
+    def username_alphanumeric(cls, v: str) -> str:
+        if not re.match(r"^[a-zA-Z0-9_-]+$", v):
+            raise ValueError('Username must contain only letters, numbers, underscores, and hyphens')
+        return v.strip()
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -28,9 +36,9 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 class UserUpdate(BaseModel):
-    display_name: Optional[str] = None
-    bio: Optional[str] = None
-    avatar_url: Optional[str] = None
+    display_name: Optional[str] = Field(None, max_length=100)
+    bio: Optional[str] = Field(None, max_length=500)
+    avatar_url: Optional[str] = Field(None, max_length=2048)
 
     class Config:
         from_attributes = True
@@ -43,16 +51,56 @@ class TokenResponse(BaseModel):
 # ─── LINK SCHEMAS ─────────────────────────────────────────────────────────────
 
 class LinkCreate(BaseModel):
-    title: str
-    url: str
-    icon: Optional[str] = None
+    title: str = Field(..., min_length=1, max_length=200)
+    url: str = Field(..., max_length=2048)
+    icon: Optional[str] = Field(None, max_length=500)
+    
+    @field_validator('url')
+    @classmethod
+    def validate_url(cls, v: str) -> str:
+        # Strip whitespace
+        v = v.strip()
+        # Ensure URL has a scheme
+        if not v.startswith(('http://', 'https://')):
+            raise ValueError('URL must start with http:// or https://')
+        # Basic validation for allowed characters
+        if any(char in v for char in ['<', '>', '"', '{', '}', '|', '\\', '^', '`']):
+            raise ValueError('URL contains invalid characters')
+        return v
+    
+    @field_validator('title')
+    @classmethod
+    def validate_title(cls, v: str) -> str:
+        return v.strip()
 
 class LinkUpdate(BaseModel):
-    title: Optional[str] = None
-    url: Optional[str] = None
-    icon: Optional[str] = None
+    title: Optional[str] = Field(None, min_length=1, max_length=200)
+    url: Optional[str] = Field(None, max_length=2048)
+    icon: Optional[str] = Field(None, max_length=500)
     is_active: Optional[bool] = None
     order_index: Optional[int] = None
+    
+    @field_validator('url')
+    @classmethod
+    def validate_url(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        # Strip whitespace
+        v = v.strip()
+        # Ensure URL has a scheme
+        if not v.startswith(('http://', 'https://')):
+            raise ValueError('URL must start with http:// or https://')
+        # Basic validation for allowed characters
+        if any(char in v for char in ['<', '>', '"', '{', '}', '|', '\\', '^', '`']):
+            raise ValueError('URL contains invalid characters')
+        return v
+    
+    @field_validator('title')
+    @classmethod
+    def validate_title(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        return v.strip()
 
 class LinkResponse(BaseModel):
     id: int

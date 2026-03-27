@@ -42,7 +42,7 @@ const Analytics = ({ setToken }) => {
           setAvgPerDay(Math.ceil(totalFromDaily / dailyRes.length));
         }
       } catch (err) {
-        console.error('Failed to fetch analytics:', err);
+        // Analytics loading failed - non-critical, continue with empty data
       } finally {
         setLoading(false);
       }
