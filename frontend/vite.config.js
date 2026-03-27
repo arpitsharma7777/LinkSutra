@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false, // Don't expose source maps in production
-    minify: 'terser',
+    minify: 'esbuild', // Use esbuild (default, faster and included)
     rollupOptions: {
       output: {
         manualChunks: {
