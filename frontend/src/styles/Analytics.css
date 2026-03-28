@@ -1,0 +1,56 @@
+.analytics-container {
+  display: flex;
+  background-color: #121212;
+  color: #fff;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  padding: 30px 20px;
+  border-right: 1px solid #222;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo { font-size: 20px; font-weight: bold; margin-bottom: 40px; }
+.nav-item { padding: 12px; color: #fbfafa; cursor: pointer; }
+
+.sidebar-bottom { margin-top: auto; }
+.add-new-btn { width: 100%; padding: 10px; border-radius: 20px; border: 1px solid #444; background: transparent; color: white; margin-bottom: 15px; cursor: pointer; }
+.logout { color: #777; font-size: 14px; padding-left: 10px; }
+
+/* Main Content */
+.analytics-main { flex: 1; padding: 40px 60px; }
+.analytics-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.page-title { font-size: 36px; font-family: serif; margin: 0; color: darkorange; }
+.time-filter { color: #ff8a65; font-size: 12px; font-weight: bold; }
+
+/* Metrics */
+.metrics-row { display: flex; border-top: 1px solid  #f76504; border-bottom: 1px solid  #f76504;; padding: 30px 0; margin-bottom: 40px; }
+.metric-card { flex: 1; padding: 0 20px; }
+.metric-card.divider { border-left: 1px solid  #f76504;; }
+.metric-value { font-size: 32px; display: block; }
+.metric-change { font-size: 12px; color: #f76504; }
+
+/* Graph Area */
+.graph-section { margin-bottom: 40px; }
+.graph-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.live-view { font-size: 10px; color: #777; border-left: 2px solid #2563eb; padding-left: 5px; }
+.graph-placeholder { height: 200px; border-bottom: 1px solid #333; position: relative; overflow: hidden; }
+.wave-line { 
+  width: 100%; height: 100%; 
+  border-top: 2px solid #2563eb; 
+  border-radius: 50% 50% 0 0; /* Simple curve representation */
+  position: absolute; top: 100px;
+}
+.graph-labels { display: flex; justify-content: space-between; padding-top: 10px; color: #555; font-size: 11px; }
+
+/* Destinations */
+.destinations-section h3 { font-size: 18px; margin-bottom: 20px; }
+.dest-item { background: #1c1c1c; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
+.dest-info { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; }
+.progress-bar { background: #333; height: 6px; border-radius: 3px; }
+.progress { background:  #f76504;quotes: 100px; height: 100%; border-radius: 3px; }
