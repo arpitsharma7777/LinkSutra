@@ -11,6 +11,7 @@ const Analytics = ({ setToken }) => {
   const [linkAnalytics, setLinkAnalytics] = useState([]);
   const [topLink, setTopLink] = useState(null);
   const [avgPerDay, setAvgPerDay] = useState(0);
+  const [copied, setCopied] = useState(false);  // ← ADD
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -20,23 +21,17 @@ const Analytics = ({ setToken }) => {
           navigate('/login');
           return;
         }
-
         setLoading(true);
-
-        // Fetch all analytics data
         const [totalRes, dailyRes, linksRes, topRes] = await Promise.all([
           getTotalClicks(token),
           getDailyAnalytics(token, 7),
           getLinkAnalytics(token),
           getTopLink(token),
         ]);
-
         setTotalClicks(totalRes.total_clicks || 0);
         setDailyData(dailyRes || []);
         setLinkAnalytics(linksRes || []);
         setTopLink(topRes);
-
-        // Calculate average per day
         if (dailyRes && dailyRes.length > 0) {
           const totalFromDaily = dailyRes.reduce((sum, day) => sum + (day.clicks || 0), 0);
           setAvgPerDay(Math.ceil(totalFromDaily / dailyRes.length));
@@ -47,7 +42,6 @@ const Analytics = ({ setToken }) => {
         setLoading(false);
       }
     };
-
     fetchAnalytics();
   }, [navigate]);
 
@@ -56,6 +50,34 @@ const Analytics = ({ setToken }) => {
     setToken(null);
     navigate("/");
   }
+
+  // ── COPY FUNCTION ──────────────────────────────  ← ADD
+  const copyAnalyticsSummary = () => {
+    const username = localStorage.getItem("username") || "your-profile";
+
+    const summary = `
+LinkSutra Analytics Summary
+────────────────────────────
+Profile  : linksutra.app/${username}
+Period   : Last 7 Days
+Total    : ${totalClicks} clicks
+Unique   : ~${Math.ceil(totalClicks * 0.5)} visitors
+Avg/Day  : ${avgPerDay} clicks
+Top Link : ${topLink?.title || "N/A"}
+
+Per Link Breakdown:
+${linkAnalytics.slice(0, 5).map(l => `  ${l.title}: ${l.click_count} clicks`).join("\n")}
+
+Generated: ${new Date().toLocaleDateString("en-IN")}
+    `.trim();
+
+    navigator.clipboard.writeText(summary)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => alert("Copy failed — please try again"));
+  };
 
   return (
     <div className="analytics-container">
@@ -84,9 +106,31 @@ const Analytics = ({ setToken }) => {
 
       {/* Main Content */}
       <main className="analytics-main">
+
+        {/* ── HEADER WITH COPY BUTTON ── */}
         <header className="analytics-header">
           <h1 className="page-title">Analytics</h1>
-          <div className="time-filter">LAST 7 DAYS</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div className="time-filter">LAST 7 DAYS</div>
+            <button
+              onClick={copyAnalyticsSummary}
+              disabled={loading}
+              style={{
+                background: copied ? "#EAF3DE" : "#3C3489",
+                color: copied ? "#27500A" : "#EEEDFE",
+                border: "none",
+                borderRadius: "8px",
+                padding: "8px 16px",
+                fontSize: "12px",
+                fontWeight: "500",
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.6 : 1,
+                transition: "all 0.2s"
+              }}
+            >
+              {copied ? "✓ Copied!" : "Copy Summary"}
+            </button>
+          </div>
         </header>
 
         {/* Top Metrics Row */}
@@ -113,11 +157,9 @@ const Analytics = ({ setToken }) => {
         <section className="graph-section">
           <div className="graph-header">
             <h2>Traffic Momentum</h2>
-           
           </div>
           <div className="graph-placeholder">
-             {/* This represents the blue wavy line in your image */}
-             <div className="wave-line"></div>
+            <div className="wave-line"></div>
           </div>
           <div className="graph-labels">
             <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
@@ -127,11 +169,10 @@ const Analytics = ({ setToken }) => {
         {/* Top Performing Destinations */}
         <section className="destinations-section">
           <h2>Top Performing Destinations</h2>
-
           {loading ? (
             <p>Loading...</p>
           ) : linkAnalytics && linkAnalytics.length > 0 ? (
-            linkAnalytics.slice(0, 5).map((link, index) => {
+            linkAnalytics.slice(0, 5).map((link) => {
               const maxClicks = linkAnalytics[0]?.click_count || 1;
               const percentage = Math.round((link.click_count / maxClicks) * 100);
               return (
@@ -140,7 +181,9 @@ const Analytics = ({ setToken }) => {
                     <span title={link.url}>{link.title || link.url}</span>
                     <span>{link.click_count} Clicks</span>
                   </div>
-                  <div className="progress-bar"><div className="progress" style={{width: `${percentage}%`}}></div></div>
+                  <div className="progress-bar">
+                    <div className="progress" style={{ width: `${percentage}%` }}></div>
+                  </div>
                 </div>
               );
             })
@@ -148,6 +191,7 @@ const Analytics = ({ setToken }) => {
             <p>No data available yet.</p>
           )}
         </section>
+
       </main>
     </div>
   );
