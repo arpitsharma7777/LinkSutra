@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserLinks, createLink, updateLink, deleteLink } from "../api/auth";
 import { useToast } from "../components/ToastNotification";
@@ -42,11 +42,7 @@ function Dashboard({ setToken }) {
         setLinks(linksData);
       } catch (err) {
         setError(err.message);
-<<<<<<< HEAD
         // Error already captured in error state
-=======
-        console.error("Error fetching dashboard data:", err);
->>>>>>> origin/divyanshi
       } finally {
         setLoading(false);
       }
@@ -106,23 +102,12 @@ function Dashboard({ setToken }) {
     }
 
     try {
-<<<<<<< HEAD
-=======
-      console.log("Deleting link with ID:", linkId);
->>>>>>> origin/divyanshi
       await deleteLink(token, linkId);
 
       const updatedLinks = links.filter(link => link.id !== linkId);
       setLinks(updatedLinks);
-<<<<<<< HEAD
       showSuccess("Link deleted successfully!");
     } catch (err) {
-=======
-      console.log("Link deleted successfully. Remaining links:", updatedLinks);
-      showSuccess("Link deleted successfully!");
-    } catch (err) {
-      console.error("Delete error:", err);
->>>>>>> origin/divyanshi
       showError("Error deleting link: " + err.message);
     }
   }

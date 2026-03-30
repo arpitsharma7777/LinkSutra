@@ -1,11 +1,6 @@
-body{
-<<<<<<< HEAD
+﻿body{
   background: #0b0b0f;
 
-=======
-  background:#0b0b0f;;
-            
->>>>>>> origin/divyanshi
 }
 .navbar {
   display: flex;
@@ -21,11 +16,7 @@ body{
 }
 
 .logo {
-<<<<<<< HEAD
   font-size: 25px;
-=======
-  font-size: 30px;
->>>>>>> origin/divyanshi
   font-weight: bold;
   color: rgb(237, 228, 224);
 }
@@ -82,23 +73,14 @@ body{
 }
 
 .card {
-<<<<<<< HEAD
   background: #341b02;
-=======
-  background:rgba(255,255,255,0.05);
->>>>>>> origin/divyanshi
   padding:50px;
   border-radius: 20px;
   width: 400px;
   height: 400px;
   text-align: center;
-<<<<<<< HEAD
   box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.5);
   border: 1px solid rgb(240, 187, 187) ;
-=======
-  box-shadow: 0px 0px 40px rgba(255,100,0,0.2);
-  border: 1px solid rgb(255,100,0,0.2) ;
->>>>>>> origin/divyanshi
 }
 
 .profile h1 {
@@ -113,18 +95,10 @@ body{
 .links button {
   width: 100%;
   margin-top: 10px;
-<<<<<<< HEAD
   padding: 20px;
   border-radius: 10px;
   border: none;
   background: linear-gradient(135deg, #ee2f09, #f29203);
-=======
-  margin-bottom: 20px;
-  padding: 20px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #ff6a00, #ff3c00);
->>>>>>> origin/divyanshi
   color: white;
   cursor: pointer;
   transition: 0.3s;
@@ -132,12 +106,7 @@ body{
 }
 
 .links button:hover {
-<<<<<<< HEAD
   background: #3a3a3f;
-=======
-  box-shadow: 0 0 20px rgba(255,100,0,0.6);
-  transform: scale(1.05);
->>>>>>> origin/divyanshi
 }
 
 .features {
