@@ -4,23 +4,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'dist',
-    sourcemap: false, // Don't expose source maps in production
-    minify: 'esbuild', // Use esbuild (default, faster and included)
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom']
-        }
-      }
-    }
+    outDir: 'dist'
   },
   server: {
-    host: 'localhost', // Security: Don't expose to network
+    host: '0.0.0.0',
     port: 3000
   },
   preview: {
-    host: 'localhost', // Security: Don't expose to network
+    host: '0.0.0.0',
     port: 3000
   }
 })

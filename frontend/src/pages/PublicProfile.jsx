@@ -9,7 +9,7 @@ function PublicProfile() {
   const [error, setError] = useState(null);
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem("ls_theme") || "minimal");
 
-  const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const API = "http://127.0.0.1:8000";
 
   const ICON_MAP = {
     youtube: "▶️",

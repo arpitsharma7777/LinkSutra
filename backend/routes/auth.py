@@ -1,12 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 
 from database import get_db
 from models import User
@@ -17,9 +15,6 @@ from dependencies import get_current_user,SECRET_KEY, ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter(prefix="/auth", tags=["Authentication"])
-
-# Initialize rate limiter
-limiter = Limiter(key_func=get_remote_address)
 
 
 # ─── HELPER FUNCTIONS ────────────────────────────────────────────────────────
@@ -39,8 +34,7 @@ def create_access_token(data: dict) -> str:
 # ─── ROUTES ──────────────────────────────────────────────────────────────────
 
 @router.post("/register", response_model=UserResponse, status_code=201)
-@limiter.limit("3/minute")
-def register(request: Request, user_data: UserCreate, db: Session = Depends(get_db)):
+def register(user_data: UserCreate, db: Session = Depends(get_db)):
     # Check email already exists
     if db.query(User).filter(User.email == user_data.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -63,9 +57,7 @@ def register(request: Request, user_data: UserCreate, db: Session = Depends(get_
 
 
 @router.post("/login", response_model=TokenResponse)
-@limiter.limit("5/minute")
 def login(
-    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):

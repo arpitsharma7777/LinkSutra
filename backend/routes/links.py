@@ -138,7 +138,7 @@ def delete_link(
 #--------Public Profile---------------------------------------------------------------------------------------------
 
 @router.get("/profile/{username}", response_model=PublicProfile)
-def public_profile(request: Request, username: str, db: Session = Depends(get_db)):
+def public_profile(username: str, db: Session = Depends(get_db)):
 
     user = db.query(User).filter(User.username == username).first()
 
@@ -181,15 +181,11 @@ def track_click(
     # IP hash karo — raw IP kabhi store mat karo
     raw_ip = request.client.host or "unknown"
     ip_hash = hashlib.sha256(raw_ip.encode()).hexdigest()
-    
-    # Get user agent from request headers
-    user_agent = request.headers.get("user-agent", "unknown")
 
     # AnalyticsEvent record banao ← YAHI ANALYTICS KO DATA DETA HAI
     event = AnalyticsEvent(
         link_id=link.id,
-        ip_hash=ip_hash,
-        user_agent=user_agent
+        ip_hash=ip_hash
     )
     db.add(event)
     db.commit()
