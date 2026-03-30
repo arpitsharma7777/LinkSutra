@@ -31,6 +31,7 @@ function Settings({ setToken }) {
         setAvatarPreview(userData.avatar_url || "");
       } catch (err) {
         setError("Failed to load user data");
+        console.error(err);
       } finally {
         setLoading(false);
       }
