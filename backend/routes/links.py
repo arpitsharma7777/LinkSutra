@@ -138,7 +138,6 @@ def delete_link(
 #--------Public Profile---------------------------------------------------------------------------------------------
 
 @router.get("/profile/{username}", response_model=PublicProfile)
-@limiter.limit("30/minute")
 def public_profile(request: Request, username: str, db: Session = Depends(get_db)):
 
     user = db.query(User).filter(User.username == username).first()
