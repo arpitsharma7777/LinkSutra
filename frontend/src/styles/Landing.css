@@ -1,22 +1,25 @@
 ﻿body{
-  background: #0b0b0f;
-
+  background:#0b0b0f;
+  margin: 0;
+  padding: 0;
 }
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 60px;
+  padding: clamp(16px, 5vw, 20px) clamp(20px, 8vw, 60px);
   background-color: #341b02;
   color: white;
   position:fixed;
   top: 0;
   left: 0;
   width: 100%;
+  z-index: 1000;
+  box-sizing: border-box;
 }
 
 .logo {
-  font-size: 25px;
+  font-size: clamp(24px, 4vw, 30px);
   font-weight: bold;
   color: rgb(237, 228, 224);
 }
@@ -24,13 +27,12 @@
 .btn{
   background:linear-gradient(135deg, #ee2f09, #f29203);
   border:1px solid white;
-  padding:10px;
+  padding: clamp(8px, 1.5vw, 10px);
   border-radius: 10px;
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   cursor: pointer;
-  margin-right: 100px;
+  margin-right: clamp(20px, 5vw, 100px);
   color: #f4f2f2;
-
 }
 
 
@@ -38,29 +40,33 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 120px 100px;
+  padding: clamp(60px, 12vw, 120px) clamp(20px, 8vw, 100px);
   background: linear-gradient(to right, #0b0b0f, #111);
   color: white;
   min-height: 70vh;
+  flex-direction: column;
+  gap: 40px;
 }
 
 
 .hero-left {
-  max-width: 50%;
+  width: 100%;
+  max-width: 100%;
 }
 
 .hero-left h1 {
-  font-size:80px;
+  font-size: clamp(32px, 8vw, 80px);
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: clamp(16px, 3vw, 20px);
   color:orangered;
+  line-height: 1.2;
 }
 
 .hero-left p {
   color: #fbf9f9;
-  margin-bottom: 30px;
+  margin-bottom: clamp(20px, 3vw, 30px);
   line-height: 1.6;
-  font-size: 30px;
+  font-size: clamp(18px, 4vw, 30px);
 }
 
 
@@ -69,48 +75,54 @@
   display: flex;
   justify-content: center;
   align-items: center;
-   padding: 80px;
+  padding: clamp(40px, 5vw, 80px);
+  width: 100%;
 }
 
 .card {
-  background: #341b02;
-  padding:50px;
+  background:rgba(255,255,255,0.05);
+  padding: clamp(30px, 5vw, 50px);
   border-radius: 20px;
-  width: 400px;
-  height: 400px;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1;
   text-align: center;
-  box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgb(240, 187, 187) ;
+  box-shadow: 0px 0px 40px rgba(255,100,0,0.2);
+  border: 1px solid rgb(255,100,0,0.2) ;
 }
 
 .profile h1 {
+  font-size: clamp(18px, 4vw, 28px);
   margin: 5px 0;
 }
 
 .profile p {
   color: #aaa;
-  font-size: 15px;
+  font-size: clamp(13px, 2vw, 15px);
 }
 
 .links button {
   width: 100%;
-  margin-top: 10px;
-  padding: 20px;
+  margin-top: clamp(8px, 1.5vw, 10px);
+  margin-bottom: clamp(16px, 2vw, 20px);
+  padding: clamp(16px, 3vw, 20px);
   border-radius: 10px;
   border: none;
-  background: linear-gradient(135deg, #ee2f09, #f29203);
+  background: linear-gradient(135deg, #ff6a00, #ff3c00);
   color: white;
   cursor: pointer;
   transition: 0.3s;
-  
+  font-size: clamp(14px, 2.5vw, 16px);
+  font-weight: 500;
 }
 
 .links button:hover {
-  background: #3a3a3f;
+  box-shadow: 0 0 20px rgba(255,100,0,0.6);
+  transform: scale(1.05);
 }
 
 .features {
-  padding: 120px 120px;
+  padding: clamp(60px, 10vw, 120px) clamp(20px, 8vw, 120px);
   text-align: center;
   color: rgb(13, 13, 13);
   background-color: #341b02;
@@ -121,96 +133,70 @@
 .features-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
+  gap: clamp(20px, 3vw, 30px);
+  width: 100%;
 }
 
-
 .feature-card {
-  padding: 60px;
-
+  padding: clamp(30px, 5vw, 60px);
   background: #fb7f03;
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-
   border-radius: 20px;
-
   transition: 0.3s;
   cursor: pointer;
   border: 2px solid rgb(6, 6, 6);
 }
-
 
 .feature-card:hover {
   transform: translateY(-10px);
   background:#d98a52;
 }
 
-
 .feature-card h2 {
-  margin-bottom: 10px;
+  margin-bottom: clamp(8px, 1.5vw, 10px);
   color: #090704;
+  font-size: clamp(18px, 4vw, 24px);
 }
 
 .feature-card p {
   color: #f4f2f2;
-  font-size: 20px;
+  font-size: clamp(16px, 2.5vw, 20px);
 }
 
 .steps {
-  padding: 100px 60px;
+  padding: clamp(60px, 10vw, 100px) clamp(20px, 8vw, 60px);
   text-align: center;
   color: white;
   background-color: #0b0b0f;
 }
 
 .steps-title {
-  font-size: 50px;
+  font-size: clamp(28px, 6vw, 50px);
   margin-bottom: 10px;
   color: #f66d04;
 }
 
 .steps-subtitle {
   color:orangered;
-  margin-bottom: 60px;
-  font-size: 30px;
+  margin-bottom: clamp(40px, 8vw, 60px);
+  font-size: clamp(20px, 4vw, 30px);
 }
-
 
 .steps-container {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: clamp(20px, 3vw, 30px);
   flex-wrap: wrap;
 }
-
-
-
-.steps-title {
-  font-size: 40px;
-  margin-bottom: 10px;
-}
-
-.steps-subtitle {
-  color: #aaa;
-  margin-bottom: 60px;
-}
-
-
-.steps-container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-}
-
 
 .step-card {
-  width: 360px;
-  padding: 50px;
-
+  width: 100%;
+  max-width: 360px;
+  padding: clamp(30px, 5vw, 50px);
   background: rgba(251, 82, 4, 0.05);
   border-radius: 20px;
- border: 5px solid rgba(255, 255, 255, 0.1);
+  border: 5px solid rgba(255, 255, 255, 0.1);
 }
 
 .step-card:hover {
@@ -218,92 +204,199 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-
 .step-number {
-  width: 50px;
-  height: 50px;
-
+  width: clamp(44px, 8vw, 50px);
+  height: clamp(44px, 8vw, 50px);
   margin: 0 auto 20px;
-
   border-radius: 50%;
   background: linear-gradient(135deg, #ee2f09, #f29203);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-weight: bold;
-  font-size: 18px;
+  font-size: clamp(18px, 4vw, 20px);
 }
-
 
 .step-card h3 {
+  font-size: clamp(16px, 3vw, 18px);
   margin-bottom: 10px;
+  color: #fff;
 }
- 
 .cta {
-  padding: 50px 50px;
+  padding: clamp(40px, 8vw, 50px);
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #341b02;
 }
 
-
 .cta-box {
   text-align: center;
-  padding: 60px 40px;
-  max-width:2000px;
+  padding: clamp(40px, 8vw, 60px) clamp(20px, 5vw, 40px);
+  max-width: 100%;
   width: 100%;
-  
   background: linear-gradient(135deg, #ee2f09, #f29203);
   border-radius: 20px;
 }
 
 .cta-box h2 {
-  font-size: 32px;
-  margin-bottom: 10px;
+  font-size: clamp(24px, 5vw, 32px);
+  margin-bottom: clamp(8px, 1.5vw, 10px);
   color: black;
 }
 
 .cta-box p {
   color:black;
-  margin-bottom: 30px;
-  font-size: 20px;
+  margin-bottom: clamp(20px, 3vw, 30px);
+  font-size: clamp(16px, 3vw, 20px);
 }
-
 
 .cta-buttons {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: clamp(12px, 2vw, 20px);
   flex-wrap: wrap;
 }
 
 .primary-btn {
   background: linear-gradient(135deg, #f44906, #090704);
   border: none;
-  padding: 12px 25px;
+  padding: clamp(10px, 2vw, 12px) clamp(16px, 3vw, 25px);
   border-radius: 10px;
   color: white;
   cursor: pointer;
   font-weight: 500;
+  font-size: clamp(14px, 2vw, 16px);
+  transition: all 0.3s ease;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .secondary-btn {
   background:rgb(47, 30, 26);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px 25px;
+  padding: clamp(10px, 2vw, 12px) clamp(16px, 3vw, 25px);
   border-radius: 10px;
   color: white;
   cursor: pointer;
+  font-size: clamp(14px, 2vw, 16px);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 
 .primary-btn:hover {
   opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 .secondary-btn:hover {
   background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ─── RESPONSIVE MEDIA QUERIES ─── */
+
+/* Mobile First: Extra Small (< 480px) */
+@media (max-width: 480px) {
+  .hero {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .hero-right {
+    padding: 20px;
+  }
+
+  .card {
+    max-width: 100%;
+  }
+
+  .links button {
+    min-height: 44px;
+  }
+
+  .features-container {
+    grid-template-columns: 1fr;
+  }
+
+  .steps-container {
+    gap: 16px;
+  }
+}
+
+/* Small (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .features-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .steps-container {
+    gap: 16px;
+  }
+
+  .step-card {
+    max-width: 280px;
+  }
+}
+
+/* Medium (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero {
+    flex-direction: row;
+    gap: 30px;
+  }
+
+  .hero-left {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .hero-right {
+    flex: 1;
+  }
+
+  .features-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .steps-container {
+    gap: 20px;
+  }
+
+  .step-card {
+    max-width: 300px;
+  }
+}
+
+/* Large (> 1024px) */
+@media (min-width: 1025px) {
+  .hero {
+    flex-direction: row;
+  }
+
+  .hero-left {
+    max-width: 50%;
+  }
+
+  .features-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .steps-container {
+    gap: 30px;
+  }
+
+  .step-card {
+    max-width: 360px;
+  }
 }
