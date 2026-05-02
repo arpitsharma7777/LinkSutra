@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Hero() {
@@ -62,4 +63,4 @@ function Hero() {
   );
 }
 
-export default Hero;
+export default React.memo(Hero);

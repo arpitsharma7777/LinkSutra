@@ -1,5 +1,7 @@
 
 
+import React;
+
 function Steps() {
   return (
     <section className="steps">
@@ -31,4 +33,4 @@ function Steps() {
   );
 }
 
-export default Steps;
+export default React.memo(Steps);

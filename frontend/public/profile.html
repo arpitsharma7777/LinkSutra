@@ -19,8 +19,8 @@
       --accent:      #2D2926;
       --accent-soft: #F0EDE8;
       --link-hover:  #1A1614;
-      --shadow:      0 2px 16px rgba(0,0,0,0.07);
-      --shadow-hover:0 6px 28px rgba(0,0,0,0.13);
+      --shadow:      0 2px 4px rgba(0,0,0,0.07);
+      --shadow-hover:0 6px 8px rgba(0,0,0,0.13);
       --avatar-border:#E8E4DF;
       --btn-bg:      #FFFFFF;
       --btn-text:    #1A1614;
@@ -36,8 +36,8 @@
       --accent:      #E8E4DF;
       --accent-soft: #1E1E24;
       --link-hover:  #FFFFFF;
-      --shadow:      0 2px 16px rgba(0,0,0,0.4);
-      --shadow-hover:0 6px 28px rgba(0,0,0,0.6);
+      --shadow:      0 2px 4px rgba(0,0,0,0.4);
+      --shadow-hover:0 6px 8px rgba(0,0,0,0.6);
       --avatar-border:#2A2A30;
       --btn-bg:      #1A1A1E;
       --btn-text:    #F0EDE8;
@@ -53,8 +53,8 @@
       --accent:      #E05C1A;
       --accent-soft: #FFF0E0;
       --link-hover:  #C04A0E;
-      --shadow:      0 2px 16px rgba(224,92,26,0.10);
-      --shadow-hover:0 6px 28px rgba(224,92,26,0.22);
+      --shadow:      0 2px 4px rgba(224,92,26,0.10);
+      --shadow-hover:0 6px 8px rgba(224,92,26,0.22);
       --avatar-border:#FFD9B3;
       --btn-bg:      #FFFFFF;
       --btn-text:    #1A0A00;
@@ -69,7 +69,7 @@
       background: var(--bg);
       color: var(--text-primary);
       min-height: 100vh;
-      transition: background 0.35s ease, color 0.35s ease;
+      transition: background 0.2s ease-out, color 0.2s ease-out;
     }
 
     /* ── Layout ──────────────────────────────────────────── */
@@ -77,7 +77,6 @@
       max-width: 480px;
       margin: 0 auto;
       padding: 48px 20px 80px;
-      animation: fadeUp 0.5s ease both;
     }
 
     @keyframes fadeUp {
@@ -255,10 +254,7 @@
     }
 
     /* ── Stagger animation on action buttons ──────────────── */
-    .action-buttons .action-btn:nth-child(1) { animation-delay: 0.15s; }
-    .action-buttons .action-btn:nth-child(2) { animation-delay: 0.20s; }
-    .action-buttons .action-btn:nth-child(3) { animation-delay: 0.25s; }
-    .action-buttons .action-btn:nth-child(4) { animation-delay: 0.30s; }
+    /* Animation delays removed for better FCP performance */
 
     /* ── Divider ─────────────────────────────────────────── */
     .divider {
@@ -351,14 +347,7 @@
     }
 
     /* ── Stagger animation on links ──────────────────────── */
-    .link-item:nth-child(1) { animation-delay: 0.05s; }
-    .link-item:nth-child(2) { animation-delay: 0.10s; }
-    .link-item:nth-child(3) { animation-delay: 0.15s; }
-    .link-item:nth-child(4) { animation-delay: 0.20s; }
-    .link-item:nth-child(5) { animation-delay: 0.25s; }
-    .link-item:nth-child(6) { animation-delay: 0.30s; }
-    .link-item:nth-child(7) { animation-delay: 0.35s; }
-    .link-item:nth-child(8) { animation-delay: 0.40s; }
+    /* Animation delays removed for better FCP performance */
 
     /* ── Empty / Error states ────────────────────────────── */
     .state-msg {

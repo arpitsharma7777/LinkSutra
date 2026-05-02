@@ -11,9 +11,10 @@ def create_database_engine(database_url: str):
     if Config.is_postgresql_url(database_url):
         return create_engine(
             database_url,
-            pool_size=5,
-            max_overflow=10,
-            pool_pre_ping=True  # Verify connections before use
+            pool_size=20,
+            max_overflow=30,
+            pool_pre_ping=True,  # Verify connections before use
+            pool_recycle=3600  # Recycle connections after 1 hour to prevent stale connections
         )
     else:
         # SQLite configuration

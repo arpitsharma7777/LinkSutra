@@ -140,8 +140,6 @@
 .feature-card {
   padding: clamp(30px, 5vw, 60px);
   background: #fb7f03;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
   border-radius: 20px;
   transition: 0.3s;
   cursor: pointer;

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from sqlalchemy import update, case
 from typing import List
 import hashlib
 from database import get_db
@@ -61,17 +62,30 @@ def reorder_links(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    if not order:
+        return {"message": "Links reordered"}
 
-    for index, link_id in enumerate(order):
+    # Verify all links belong to current user
+    link_count = db.query(Link).filter(
+        Link.user_id == current_user.id,
+        Link.id.in_(order)
+    ).count()
 
-        link = db.query(Link).filter(
-            Link.id == link_id,
-            Link.user_id == current_user.id
-        ).first()
+    if link_count != len(order):
+        raise HTTPException(status_code=400, detail="Invalid links provided")
 
-        if link:
-            link.order_index = index
+    # Bulk update using CASE statement - single query instead of N queries
+    stmt = update(Link).values(
+        order_index=case(
+            {link_id: idx for idx, link_id in enumerate(order)},
+            value=Link.order_index
+        )
+    ).where(
+        Link.user_id == current_user.id,
+        Link.id.in_(order)
+    )
 
+    db.execute(stmt)
     db.commit()
 
     return {"message": "Links reordered"}
@@ -167,7 +181,7 @@ def public_profile(username: str, db: Session = Depends(get_db)):
 @router.get("/{link_id}/click")
 def track_click(
     link_id: int,
-    request: Request,           # ← IP ke liye
+    request: Request,
     db: Session = Depends(get_db)
 ):
     link = db.query(Link).filter(Link.id == link_id).first()
@@ -175,19 +189,24 @@ def track_click(
     if not link:
         raise HTTPException(status_code=404, detail="Link not found")
 
-    # click_count increment
-    link.click_count += 1
-
-    # IP hash karo — raw IP kabhi store mat karo
+    # Get IP hash for analytics
     raw_ip = request.client.host or "unknown"
     ip_hash = hashlib.sha256(raw_ip.encode()).hexdigest()
 
-    # AnalyticsEvent record banao ← YAHI ANALYTICS KO DATA DETA HAI
+    # Record analytics event
     event = AnalyticsEvent(
         link_id=link.id,
         ip_hash=ip_hash
     )
     db.add(event)
+
+    # Atomically increment click count using SQL UPDATE (prevents lost updates on concurrent requests)
+    db.execute(
+        update(Link).where(Link.id == link_id).values(
+            click_count=Link.click_count + 1
+        )
+    )
+
     db.commit()
 
     return RedirectResponse(url=link.url, status_code=302)

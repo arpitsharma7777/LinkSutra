@@ -1,4 +1,6 @@
 
+import React;
+
 function CTA() {
   return (
     <section className="cta">
@@ -15,4 +17,4 @@ function CTA() {
   );
 }
 
-export default CTA;
+export default React.memo(CTA);

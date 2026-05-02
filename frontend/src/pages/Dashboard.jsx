@@ -1,8 +1,11 @@
-﻿import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserLinks, createLink, updateLink, deleteLink } from "../api/auth";
 import { useToast } from "../components/ToastNotification";
 import { useModal } from "../components/Modal";
+import { FormProvider, useForm } from "../components/FormContext";
+import LinkItem from "../components/LinkItem";
+import LinkForm from "../components/LinkForm";
 import "../styles/Dashboard.css";
 
 function Dashboard({ setToken }) {
@@ -13,17 +16,12 @@ function Dashboard({ setToken }) {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
-  const [newUrl, setNewUrl] = useState("");
-  const [newIcon, setNewIcon] = useState("🔗");
-  const [editingId, setEditingId] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editUrl, setEditUrl] = useState("");
-  const [editIcon, setEditIcon] = useState("");
 
-  // Emoji options for links
-  const emojiOptions = ["🔗", "🌐", "📧", "📱", "💼", "🎯", "🚀", "⭐", "📊", "🎨", "💻", "📝"];
+  // Emoji options memoized to prevent recreation on every render
+  const emojiOptions = useMemo(
+    () => ["🔗", "🌐", "📧", "📱", "💼", "🎯", "🚀", "⭐", "📊", "🎨", "💻", "📝"],
+    []
+  );
 
   // Fetch user data and links on component mount
   useEffect(() => {
@@ -42,7 +40,6 @@ function Dashboard({ setToken }) {
         setLinks(linksData);
       } catch (err) {
         setError(err.message);
-        // Error already captured in error state
       } finally {
         setLoading(false);
       }
@@ -51,156 +48,220 @@ function Dashboard({ setToken }) {
     fetchData();
   }, [navigate]);
 
-  // Handle adding a new link
-  async function handleAddLink(title, url, icon) {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      showError("Session expired. Please login again.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const newLink = await createLink(token, title, url, icon);
-      setLinks([...links, newLink]);
-      setNewTitle("");
-      setNewUrl("");
-      setNewIcon("🔗");
-      setShowAddForm(false);
-      showSuccess("Link added successfully!");
-    } catch (err) {
-      showError("Error adding link: " + err.message);
-    }
+  if (loading) {
+    return (
+      <div className="dashboard-container">
+        <div className="loading">Loading dashboard...</div>
+      </div>
+    );
   }
 
-  function handleAddFormOpenClick() {
-    setShowAddForm(true);
-  }
+  return (
+    <FormProvider>
+      <DashboardContent
+        user={user}
+        links={links}
+        setLinks={setLinks}
+        emojiOptions={emojiOptions}
+        navigate={navigate}
+        showSuccess={showSuccess}
+        showError={showError}
+        showWarning={showWarning}
+        showConfirmModal={showConfirmModal}
+        setToken={setToken}
+      />
+    </FormProvider>
+  );
+}
 
-  function handleAddFormCloseClick() {
-    setShowAddForm(false);
-    setNewTitle("");
-    setNewUrl("");
-    setNewIcon("🔗");
-  }
+function DashboardContent({
+  user,
+  links,
+  setLinks,
+  emojiOptions,
+  navigate,
+  showSuccess,
+  showError,
+  showWarning,
+  showConfirmModal,
+  setToken,
+}) {
+  const {
+    showAddForm,
+    setShowAddForm,
+    newTitle,
+    setNewTitle,
+    newUrl,
+    setNewUrl,
+    newIcon,
+    setNewIcon,
+    editingId,
+    setEditingId,
+    editTitle,
+    setEditTitle,
+    editUrl,
+    setEditUrl,
+    editIcon,
+    setEditIcon,
+  } = useForm();
 
-  function handleAddFormSubmit() {
-    if (!newTitle.trim() || !newUrl.trim()) {
-      showWarning("Please enter both title and URL");
-      return;
-    }
-    handleAddLink(newTitle, newUrl, newIcon);
-  }
+  // Memoized callbacks to prevent unnecessary re-renders of child components
+  const handleAddLink = useCallback(
+    async (title, url, icon) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        showError("Session expired. Please login again.");
+        navigate("/login");
+        return;
+      }
 
-  // Handle deleting a link
-  async function handleDeleteLink(linkId) {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      showError("Session expired. Please login again.");
-      navigate("/login");
-      return;
-    }
+      try {
+        const newLink = await createLink(token, title, url, icon);
+        setLinks([...links, newLink]);
+        setNewTitle("");
+        setNewUrl("");
+        setNewIcon("🔗");
+        setShowAddForm(false);
+        showSuccess("Link added successfully!");
+      } catch (err) {
+        showError("Error adding link: " + err.message);
+      }
+    },
+    [links, navigate, showError, showSuccess, setLinks, setNewTitle, setNewUrl, setNewIcon, setShowAddForm]
+  );
 
-    try {
-      await deleteLink(token, linkId);
+  const handleDeleteLink = useCallback(
+    async (linkId) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        showError("Session expired. Please login again.");
+        navigate("/login");
+        return;
+      }
 
-      const updatedLinks = links.filter(link => link.id !== linkId);
-      setLinks(updatedLinks);
-      showSuccess("Link deleted successfully!");
-    } catch (err) {
-      showError("Error deleting link: " + err.message);
-    }
-  }
+      try {
+        await deleteLink(token, linkId);
+        const updatedLinks = links.filter((link) => link.id !== linkId);
+        setLinks(updatedLinks);
+        showSuccess("Link deleted successfully!");
+      } catch (err) {
+        showError("Error deleting link: " + err.message);
+      }
+    },
+    [links, navigate, showError, showSuccess, setLinks]
+  );
 
-  // Handle editing a link
-  async function handleEditLink(linkId, title, url, icon) {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      showError("Session expired. Please login again.");
-      navigate("/login");
-      return;
-    }
+  const handleEditLink = useCallback(
+    async (linkId, title, url, icon) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        showError("Session expired. Please login again.");
+        navigate("/login");
+        return;
+      }
 
-    try {
-      const updatedLink = await updateLink(token, linkId, { title, url, icon });
-      setLinks(links.map(link => link.id === linkId ? updatedLink : link));
-      setEditingId(null);
-      setEditTitle("");
-      setEditUrl("");
-      setEditIcon("");
-      showSuccess("Link updated successfully!");
-    } catch (err) {
-      showError("Error updating link: " + err.message);
-    }
-  }
+      try {
+        const updatedLink = await updateLink(token, linkId, { title, url, icon });
+        setLinks(links.map((link) => (link.id === linkId ? updatedLink : link)));
+        setEditingId(null);
+        setEditTitle("");
+        setEditUrl("");
+        setEditIcon("");
+        showSuccess("Link updated successfully!");
+      } catch (err) {
+        showError("Error updating link: " + err.message);
+      }
+    },
+    [links, navigate, showError, showSuccess, setLinks, setEditingId, setEditTitle, setEditUrl, setEditIcon]
+  );
 
-  // Handle toggling link active status
-  async function handleToggleLink(linkId, currentStatus) {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      showError("Session expired. Please login again.");
-      navigate("/login");
-      return;
-    }
+  const handleToggleLink = useCallback(
+    async (linkId, currentStatus) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        showError("Session expired. Please login again.");
+        navigate("/login");
+        return;
+      }
 
-    try {
-      const updatedLink = await updateLink(token, linkId, { is_active: !currentStatus });
-      setLinks(links.map(link => link.id === linkId ? updatedLink : link));
-    } catch (err) {
-      showError("Error updating link: " + err.message);
-    }
-  }
+      try {
+        const updatedLink = await updateLink(token, linkId, { is_active: !currentStatus });
+        setLinks(links.map((link) => (link.id === linkId ? updatedLink : link)));
+      } catch (err) {
+        showError("Error updating link: " + err.message);
+      }
+    },
+    [links, navigate, showError, setLinks]
+  );
 
-  function handleEditClick(linkId, title, url, icon) {
-    setEditingId(linkId);
-    setEditTitle(title);
-    setEditUrl(url);
-    setEditIcon(icon || "🔗");
-  }
+  const handleDeleteClick = useCallback(
+    async (linkId) => {
+      const confirmed = await showConfirmModal({
+        title: "Delete Link",
+        message: "Are you sure you want to delete this link? This action cannot be undone.",
+        confirmText: "Delete",
+        cancelText: "Cancel",
+        confirmButtonType: "danger",
+      });
 
-  function handleSaveEdit(linkId) {
-    if (!editTitle.trim() || !editUrl.trim()) {
-      showWarning("Please enter both title and URL");
-      return;
-    }
-    handleEditLink(linkId, editTitle, editUrl, editIcon);
-  }
+      if (confirmed) {
+        handleDeleteLink(linkId);
+      }
+    },
+    [showConfirmModal, handleDeleteLink]
+  );
 
-  function handleCancelEdit() {
+  const handleEditClick = useCallback(
+    (linkId, title, url, icon) => {
+      setEditingId(linkId);
+      setEditTitle(title);
+      setEditUrl(url);
+      setEditIcon(icon || "🔗");
+    },
+    [setEditingId, setEditTitle, setEditUrl, setEditIcon]
+  );
+
+  const handleEditCancel = useCallback(() => {
     setEditingId(null);
     setEditTitle("");
     setEditUrl("");
     setEditIcon("");
-  }
+  }, [setEditingId, setEditTitle, setEditUrl, setEditIcon]);
 
-  async function handleDeleteClick(linkId) {
-    const confirmed = await showConfirmModal({
-      title: "Delete Link",
-      message: "Are you sure you want to delete this link? This action cannot be undone.",
-      confirmText: "Delete",
-      cancelText: "Cancel",
-      confirmButtonType: "danger"
-    });
+  const handleEditSave = useCallback(
+    (linkId) => {
+      if (!editTitle.trim() || !editUrl.trim()) {
+        showWarning("Please enter both title and URL");
+        return;
+      }
+      handleEditLink(linkId, editTitle, editUrl, editIcon);
+    },
+    [editTitle, editUrl, editIcon, showWarning, handleEditLink]
+  );
 
-    if (confirmed) {
-      handleDeleteLink(linkId);
+  const handleAddFormOpen = useCallback(() => {
+    setShowAddForm(true);
+  }, [setShowAddForm]);
+
+  const handleAddFormClose = useCallback(() => {
+    setShowAddForm(false);
+    setNewTitle("");
+    setNewUrl("");
+    setNewIcon("🔗");
+  }, [setShowAddForm, setNewTitle, setNewUrl, setNewIcon]);
+
+  const handleCopyPublicURL = useCallback(() => {
+    if (user) {
+      const publicURL = `${window.location.origin}/profile.html?u=${user.username}`;
+      navigator.clipboard.writeText(publicURL);
+      showSuccess("Public URL copied to clipboard!");
     }
-  }
+  }, [user, showSuccess]);
 
-  function handleCopyPublicURL() {
-  if (user) {
-    // React route nahi, actual static file ka URL
-    const publicURL = `${window.location.origin}/profile.html?u=${user.username}`;
-    navigator.clipboard.writeText(publicURL);
-    showSuccess("Public URL copied to clipboard!");
-  }
-}
-
-
-  function handleExportHTML() {
+  const handleExportHTML = useCallback(() => {
     if (!user) return;
 
-    const activeLinks = links.filter(link => link.is_active);
+    const activeLinks = links.filter((link) => link.is_active);
     const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -211,77 +272,75 @@ function Dashboard({ setToken }) {
 <body>
     <div class="container">
         <div class="avatar">
-            ${user.avatar_url ? `<img src="${user.avatar_url}" alt="Avatar">` : '👤'}
+            ${user.avatar_url ? `<img src="${user.avatar_url}" alt="Avatar">` : "👤"}
         </div>
         <h1 class="name">${user.display_name || user.username}</h1>
-        <p class="bio">${user.bio || 'Welcome to my links'}</p>
+        <p class="bio">${user.bio || "Welcome to my links"}</p>
         <div class="links">
-            ${activeLinks.map(link => `
+            ${activeLinks
+              .map(
+                (link) => `
                 <a href="${link.url}" target="_blank" class="link">
-                    <span class="link-icon">${link.icon || '🔗'}</span>
+                    <span class="link-icon">${link.icon || "🔗"}</span>
                     <span>${link.title}</span>
                 </a>
-            `).join('')}
+            `
+              )
+              .join("")}
         </div>
         <p class="powered-by">Powered by <a href="https://linksutra.dev" target="_blank">LinkSutra</a></p>
     </div>
 </body>
 </html>`;
 
-    const blob = new Blob([htmlTemplate], { type: 'text/html' });
+    const blob = new Blob([htmlTemplate], { type: "text/html" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `${user.username || 'profile'}_links.html`;
+    a.download = `${user.username || "profile"}_links.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
     showSuccess("HTML file exported successfully!");
-  }
+  }, [user, links, showSuccess]);
 
-  function handleExportJSON() {
+  const handleExportJSON = useCallback(() => {
     if (!user) return;
 
-    const activeLinks = links.filter(link => link.is_active);
+    const activeLinks = links.filter((link) => link.is_active);
     const jsonData = {
       user: {
         username: user.username,
         display_name: user.display_name,
         bio: user.bio,
-        avatar_url: user.avatar_url
+        avatar_url: user.avatar_url,
       },
       links: activeLinks,
-      exported_at: new Date().toISOString()
+      exported_at: new Date().toISOString(),
     };
 
-    const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(jsonData, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `${user.username || 'profile'}_links.json`;
+    a.download = `${user.username || "profile"}_links.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
     showSuccess("JSON file exported successfully!");
-  }
+  }, [user, links, showSuccess]);
 
-  function handleLogout() {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
     setToken(null);
     navigate("/");
-  }
-
-  if (loading) {
-    return (
-      <div className="dashboard-container">
-        <div className="loading">Loading dashboard...</div>
-      </div>
-    );
-  }
+  }, [setToken, navigate]);
 
   return (
     <div className="dashboard-container">
@@ -331,53 +390,19 @@ function Dashboard({ setToken }) {
             <button className="copy-url-btn" onClick={handleCopyPublicURL}>
               📋 Copy Public URL
             </button>
-            <button className="add-link-btn" onClick={handleAddFormOpenClick}>
+            <button className="add-link-btn" onClick={handleAddFormOpen}>
               + Add link
             </button>
           </div>
         </div>
 
-        {/* Add Link Form */}
+        {/* Add Link Form - Using new LinkForm component */}
         {showAddForm && (
-          <div className="add-form">
-            <h3>Add New Link</h3>
-            <div className="form-row">
-              <div className="icon-selector">
-                <label>Icon:</label>
-                <select
-                  value={newIcon}
-                  onChange={(e) => setNewIcon(e.target.value)}
-                  className="icon-select"
-                >
-                  {emojiOptions.map(emoji => (
-                    <option key={emoji} value={emoji}>{emoji}</option>
-                  ))}
-                </select>
-              </div>
-              <input
-                type="text"
-                placeholder="Link Title (e.g., My Portfolio)"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                className="form-input"
-              />
-            </div>
-            <input
-              type="text"
-              placeholder="Link URL (e.g., https://portfolio.dev)"
-              value={newUrl}
-              onChange={(e) => setNewUrl(e.target.value)}
-              className="form-input"
-            />
-            <div className="form-actions">
-              <button className="btn-save" onClick={handleAddFormSubmit}>
-                Add
-              </button>
-              <button className="btn-cancel" onClick={handleAddFormCloseClick}>
-                Cancel
-              </button>
-            </div>
-          </div>
+          <LinkForm
+            emojiOptions={emojiOptions}
+            onSubmit={handleAddLink}
+            onCancel={handleAddFormClose}
+          />
         )}
 
         <div className="content-body">
@@ -389,83 +414,23 @@ function Dashboard({ setToken }) {
                 </div>
               ) : (
                 links.map((link) => (
-                  editingId === link.id ? (
-                    // Edit Mode
-                    <div key={link.id} className="link-item editing">
-                      <div className="link-content">
-                        <div className="icon-selector">
-                          <select
-                            value={editIcon}
-                            onChange={(e) => setEditIcon(e.target.value)}
-                            className="icon-select small"
-                          >
-                            {emojiOptions.map(emoji => (
-                              <option key={emoji} value={emoji}>{emoji}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="link-inputs">
-                          <input
-                            type="text"
-                            value={editTitle}
-                            onChange={(e) => setEditTitle(e.target.value)}
-                            placeholder="Title"
-                            className="edit-input"
-                          />
-                          <input
-                            type="text"
-                            value={editUrl}
-                            onChange={(e) => setEditUrl(e.target.value)}
-                            placeholder="URL"
-                            className="edit-input"
-                          />
-                        </div>
-                      </div>
-                      <div className="link-actions">
-                        <button className="btn-save small" onClick={() => handleSaveEdit(link.id)}>
-                          ✓
-                        </button>
-                        <button className="btn-cancel small" onClick={handleCancelEdit}>
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    // View Mode
-                    <div key={link.id} className="link-item">
-                      <div className="link-content">
-                        <div className="link-icon">
-                          {link.icon || "🔗"}
-                        </div>
-                        <div className="link-info">
-                          <h3 className="link-title">{link.title}</h3>
-                          <p className="link-url">{link.url}</p>
-                        </div>
-                      </div>
-                      <div className="link-controls">
-                        <label className="toggle-switch">
-                          <input
-                            type="checkbox"
-                            checked={link.is_active || false}
-                            onChange={() => handleToggleLink(link.id, link.is_active)}
-                          />
-                          <span className="slider"></span>
-                        </label>
-                        <button
-                          className="btn-edit"
-                          onClick={() => handleEditClick(link.id, link.title, link.url, link.icon)}
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className="btn-delete"
-                          onClick={() => handleDeleteClick(link.id)}
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </div>
-                  )
+                  <LinkItem
+                    key={link.id}
+                    link={link}
+                    isEditing={editingId === link.id}
+                    editTitle={editTitle}
+                    editUrl={editUrl}
+                    editIcon={editIcon}
+                    onEdit={handleEditClick}
+                    onDelete={handleDeleteClick}
+                    onToggle={handleToggleLink}
+                    onEditTitleChange={(e) => setEditTitle(e.target.value)}
+                    onEditUrlChange={(e) => setEditUrl(e.target.value)}
+                    onEditIconChange={(e) => setEditIcon(e.target.value)}
+                    onEditCancel={handleEditCancel}
+                    onEditSave={handleEditSave}
+                    emojiOptions={emojiOptions}
+                  />
                 ))
               )}
             </div>

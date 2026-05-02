@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -35,13 +35,19 @@ def create_access_token(data: dict) -> str:
 
 @router.post("/register", response_model=UserResponse, status_code=201)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
-    # Check email already exists
-    if db.query(User).filter(User.email == user_data.email).first():
-        raise HTTPException(status_code=400, detail="Email already registered")
+    # Check both email and username in single query (instead of 2 separate queries)
+    existing_user = db.query(User).filter(
+        or_(
+            User.email == user_data.email,
+            User.username == user_data.username
+        )
+    ).first()
 
-    # Check username already exists
-    if db.query(User).filter(User.username == user_data.username).first():
-        raise HTTPException(status_code=400, detail="Username already taken")
+    if existing_user:
+        if existing_user.email == user_data.email:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        else:
+            raise HTTPException(status_code=400, detail="Username already taken")
 
     # Create new user
     new_user = User(
