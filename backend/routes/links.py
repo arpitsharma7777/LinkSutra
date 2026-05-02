@@ -7,6 +7,7 @@ from database import get_db
 from models import Link, User, AnalyticsEvent
 from schemas import LinkCreate, LinkUpdate, LinkResponse, PublicProfile
 from dependencies import get_current_user
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/links", tags=["links"])
 
@@ -155,13 +156,29 @@ def public_profile(username: str, db: Session = Depends(get_db)):
         .all()
     )
 
-    return {
+    # Separate links into social links and regular links
+    social_domains = {'instagram', 'twitter', 'x', 'github', 'linkedin', 'facebook', 'tiktok', 'twitch', 'youtube', 'discord', 'telegram', 'whatsapp', 'spotify'}
+    social_links = [link for link in links if any(domain in link.title.lower() or domain in link.url.lower() for domain in social_domains)]
+    action_links = [link for link in links if link not in social_links]
+
+    response_data = {
         "username": user.username,
         "display_name": user.display_name,
         "bio": user.bio,
         "avatar_url": user.avatar_url,
-        "links": links
+        "links": action_links,
+        "social_links": social_links,
+        "action_buttons": []
     }
+    
+    # Create response with caching headers
+    return JSONResponse(
+        content=response_data,
+        headers={
+            "Cache-Control": "public, max-age=3600",  # 1 hour cache
+            "ETag": f'"{hash(f"{user.id}-{len(links)}")}\"'  # Cheap etag
+        }
+    )
     #-------Click Tracking + Redirect--------------------------------------------------------------------------------------------
   
 @router.get("/{link_id}/click")

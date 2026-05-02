@@ -76,6 +76,8 @@ class PublicProfile(BaseModel):
     bio: Optional[str]
     avatar_url: Optional[str]
     links: List[LinkResponse]
+    social_links: List[LinkResponse] = []
+    action_buttons: List[LinkResponse] = []
 
     class Config:
         from_attributes = True

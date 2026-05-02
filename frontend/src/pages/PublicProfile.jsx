@@ -30,10 +30,13 @@ function PublicProfile() {
     default: "🔗",
   };
 
+  // O(1) lookup instead of O(n*m)
   const getIcon = (title, url) => {
-    const key = (title + url).toLowerCase();
-    for (const [k, v] of Object.entries(ICON_MAP)) {
-      if (key.includes(k)) return v;
+    const text = (title + url).toLowerCase();
+    for (const domain of Object.keys(ICON_MAP)) {
+      if (domain !== 'default' && text.includes(domain)) {
+        return ICON_MAP[domain];
+      }
     }
     return ICON_MAP.default;
   };
@@ -193,7 +196,7 @@ function PublicProfile() {
       <div className="profile-header">
         <div className="avatar-wrap">
           {profileData.avatar_url ? (
-            <img className="avatar" src={profileData.avatar_url} alt={profileData.display_name} />
+            <img className="avatar" src={profileData.avatar_url} alt={profileData.display_name} loading="lazy" decoding="async" />
           ) : (
             <div className="avatar-placeholder">{initials}</div>
           )}

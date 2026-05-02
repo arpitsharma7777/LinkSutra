@@ -5,6 +5,7 @@ Clean, optimized FastAPI application for Render deployment
 import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from database import engine, Base
 from config import Config
 from utils.database import DatabaseHealth, get_database_connection_info
@@ -45,6 +46,9 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    
+    # Add GZip compression for faster responses
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
     logger.info(f"CORS configured for origins: {cors_origins}")
 
     # Include routers
