@@ -1,6 +1,4 @@
-
-
-import React;
+import React from 'react';
 
 function Steps() {
   return (
