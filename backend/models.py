@@ -7,12 +7,12 @@ class User(Base):
     __tablename__ = "users"
 
     id           = Column(Integer, primary_key=True, index=True)
-    username     = Column(String, unique=True, index=True, nullable=False)
-    email        = Column(String, unique=True, index=True, nullable=False)
+    username     = Column(String(50), unique=True, index=True, nullable=False)
+    email        = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    display_name = Column(String, nullable=True)
-    bio          = Column(Text, nullable=True)
-    avatar_url   = Column(String, nullable=True)
+    display_name = Column(String(100), nullable=True)
+    bio          = Column(String(500), nullable=True)
+    avatar_url   = Column(String(2048), nullable=True)
     created_at   = Column(DateTime, default=datetime.utcnow)
 
     # Relationship — User ke saare links
@@ -24,9 +24,9 @@ class Link(Base):
 
     id          = Column(Integer, primary_key=True, index=True)
     user_id     = Column(Integer, ForeignKey("users.id"), nullable=False)
-    title       = Column(String, nullable=False)
-    url         = Column(String, nullable=False)
-    icon        = Column(String, nullable=True)
+    title       = Column(String(200), nullable=False)
+    url         = Column(String(2048), nullable=False)
+    icon        = Column(String(50), nullable=True)
     is_active   = Column(Boolean, default=True)
     order_index = Column(Integer, default=0)
     click_count = Column(Integer, default=0)
@@ -43,7 +43,7 @@ class AnalyticsEvent(Base):
     id         = Column(Integer, primary_key=True, index=True)
     link_id    = Column(Integer, ForeignKey("links.id"), nullable=False)
     clicked_at = Column(DateTime, default=datetime.utcnow)
-    ip_hash    = Column(String, nullable=True)
-    user_agent = Column(String, nullable=True)
+    ip_hash    = Column(String(64), nullable=True)
+    user_agent = Column(String(500), nullable=True)
 
     link = relationship("Link", back_populates="analytics")

@@ -8,8 +8,11 @@ from database import get_db
 from models import Link, User, AnalyticsEvent
 from schemas import LinkCreate, LinkUpdate, LinkResponse, PublicProfile
 from dependencies import get_current_user
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 router = APIRouter(prefix="/links", tags=["links"])
+limiter = Limiter(key_func=get_remote_address)
 
 #---------Create Link-----------------------------------------------------------------
 
@@ -179,6 +182,7 @@ def public_profile(username: str, db: Session = Depends(get_db)):
     #-------Click Tracking + Redirect--------------------------------------------------------------------------------------------
   
 @router.get("/{link_id}/click")
+@limiter.limit("30/minute")
 def track_click(
     link_id: int,
     request: Request,
@@ -209,4 +213,9 @@ def track_click(
 
     db.commit()
 
-    return RedirectResponse(url=link.url, status_code=302)
+    # Validate URL protocol to prevent open redirect attacks
+    url_str = str(link.url)
+    if not url_str.startswith(('http://', 'https://')):
+        raise HTTPException(status_code=400, detail="Invalid URL protocol")
+    
+    return RedirectResponse(url=url_str, status_code=302)

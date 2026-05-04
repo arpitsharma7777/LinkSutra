@@ -1,15 +1,23 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, AnyHttpUrl, field_validator
 from typing import Optional, List
 from datetime import datetime
+import re
 
 
 # ─── AUTH SCHEMAS ────────────────────────────────────────────────────────────
 
 class UserCreate(BaseModel):
-    username: str
+    username: str = Field(..., min_length=3, max_length=50, pattern=r'^[a-zA-Z0-9_-]+$', description="Username must be 3-50 chars, alphanumeric with - and _")
     email: EmailStr
-    password: str
-    display_name: Optional[str] = None
+    password: str = Field(..., min_length=8, max_length=128, description="Password must be 8-128 characters")
+    display_name: Optional[str] = Field(None, max_length=100, description="Max 100 characters")
+
+    @field_validator('username')
+    @classmethod
+    def validate_username(cls, v):
+        if not re.match(r'^[a-zA-Z0-9_-]+$', v):
+            raise ValueError('Username can only contain alphanumeric characters, hyphens, and underscores')
+        return v
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -28,9 +36,9 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 class UserUpdate(BaseModel):
-    display_name: Optional[str] = None
-    bio: Optional[str] = None
-    avatar_url: Optional[str] = None
+    display_name: Optional[str] = Field(None, max_length=100, description="Max 100 characters")
+    bio: Optional[str] = Field(None, max_length=500, description="Max 500 characters")
+    avatar_url: Optional[AnyHttpUrl] = Field(None, description="Must be a valid HTTP(S) URL")
 
     class Config:
         from_attributes = True
@@ -43,16 +51,32 @@ class TokenResponse(BaseModel):
 # ─── LINK SCHEMAS ─────────────────────────────────────────────────────────────
 
 class LinkCreate(BaseModel):
-    title: str
-    url: str
-    icon: Optional[str] = None
+    title: str = Field(..., min_length=1, max_length=200, description="Link title, 1-200 characters")
+    url: AnyHttpUrl = Field(..., description="Must be a valid HTTP(S) URL")
+    icon: Optional[str] = Field(None, max_length=50, description="Icon identifier, max 50 characters")
+
+    @field_validator('title')
+    @classmethod
+    def validate_title(cls, v):
+        if not v.strip():
+            raise ValueError('Title cannot be empty or whitespace only')
+        return v.strip()
 
 class LinkUpdate(BaseModel):
-    title: Optional[str] = None
-    url: Optional[str] = None
-    icon: Optional[str] = None
+    title: Optional[str] = Field(None, min_length=1, max_length=200, description="Link title, 1-200 characters")
+    url: Optional[AnyHttpUrl] = Field(None, description="Must be a valid HTTP(S) URL")
+    icon: Optional[str] = Field(None, max_length=50, description="Icon identifier, max 50 characters")
     is_active: Optional[bool] = None
-    order_index: Optional[int] = None
+    order_index: Optional[int] = Field(None, ge=0, description="Must be non-negative")
+
+    @field_validator('title')
+    @classmethod
+    def validate_title(cls, v):
+        if v is not None:
+            if not v.strip():
+                raise ValueError('Title cannot be empty or whitespace only')
+            return v.strip()
+        return v
 
 class LinkResponse(BaseModel):
     id: int
