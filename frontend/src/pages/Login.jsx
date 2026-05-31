@@ -37,6 +37,24 @@ export default function Login({ setToken }) {
   async function handleRegister(e) {
     e.preventDefault();
     setError("");
+
+    // Client-side validations matching backend constraints
+    if (regName.length < 3 || regName.length > 50) {
+      setError("Username must be between 3 and 50 characters");
+      return;
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!usernameRegex.test(regName)) {
+      setError("Username can only contain alphanumeric characters, hyphens, and underscores");
+      return;
+    }
+
+    if (regPassword.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
     setLoading(true);
     try {
       await registerUser(regName, regEmail, regPassword, regName);
