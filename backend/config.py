@@ -15,8 +15,12 @@ class Config:
 
     # Database configuration
     def get_database_url() -> str:
-        """Get database URL with fallback to SQLite for development"""
-        return os.getenv("DATABASE_URL", "sqlite:///./linksutra.db")
+        """Get database URL with fallback to SQLite for development and postgresql:// correction"""
+        url = os.getenv("DATABASE_URL", "sqlite:///./linksutra.db")
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return url
+
 
     def is_postgresql_url(url: str) -> bool:
         """Check if database URL is PostgreSQL"""
@@ -40,7 +44,7 @@ class Config:
         # Production default - restrict to frontend domain
         if Config.is_production() and not origins_env:
             frontend_url = os.getenv("FRONTEND_URL")
-            return [frontend_url] if frontend_url else ["https://your-frontend-domain.onrender.com"]
+            return [frontend_url] if frontend_url else ["https://linksutra-frontend.onrender.com"]
 
         # Development defaults
         if not origins_env or origins_env == "*":
