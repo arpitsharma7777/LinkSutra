@@ -1,3 +1,4 @@
+import React from 'react';
 import { useToast } from "./ToastNotification";
 
 function ProfileCard({ user }) {
@@ -27,4 +28,4 @@ function ProfileCard({ user }) {
   );
 }
 
-export default ProfileCard;
+export default React.memo(ProfileCard);

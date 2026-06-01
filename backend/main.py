@@ -6,6 +6,8 @@ import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+
 from database import engine, Base
 from config import Config
 from utils.database import DatabaseHealth, get_database_connection_info
@@ -39,6 +41,11 @@ def create_app() -> FastAPI:
 
     # Configure CORS (computed once at startup)
     cors_origins = Config.get_cors_origins()
+    
+    # Add security middleware (order matters - HTTPS first)
+    if Config.is_production():
+        app.add_middleware(HTTPSRedirectMiddleware)
+    
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
@@ -49,12 +56,35 @@ def create_app() -> FastAPI:
     
     # Add GZip compression for faster responses
     app.add_middleware(GZipMiddleware, minimum_size=1000)
+    
+    # Add security headers
+    @app.middleware("http")
+    async def add_security_headers(request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
+    
+
     logger.info(f"CORS configured for origins: {cors_origins}")
+    logger.info(f"Production mode: {Config.is_production()}")
 
     # Include routers
     app.include_router(auth.router)
     app.include_router(links.router)
     app.include_router(analytics.router)
+    
+    # Add exception handler for rate limiting
+    from slowapi.errors import RateLimitExceeded
+    @app.exception_handler(RateLimitExceeded)
+    async def rate_limit_exceeded_handler(request, exc):
+        return {
+            "error": "Rate limit exceeded",
+            "detail": "Too many requests. Please try again later.",
+            "status": 429
+        }
 
     return app
 

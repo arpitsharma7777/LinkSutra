@@ -1,0 +1,42 @@
+services:
+  # 1. Backend Web Service (FastAPI)
+  - type: web
+    name: linksutra-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDirectory: backend
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: linksutra-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        fromService:
+          type: web
+          name: linksutra-frontend
+          property: url
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: linksutra-frontend
+          property: url
+
+  # 2. Frontend Static Site (React + Vite)
+  - type: web
+    name: linksutra-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    rootDirectory: frontend
+    routes:
+      # Rewrite rule to route all frontend paths to index.html for React Router support
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: linksutra-db
+    plan: free

@@ -57,7 +57,7 @@ function ToastContainer({ toasts, removeToast }) {
   return (
     <div className="toast-container">
       {toasts.map(toast => (
-        <Toast
+        <MemoizedToast
           key={toast.id}
           toast={toast}
           onRemove={() => removeToast(toast.id)}
@@ -112,3 +112,8 @@ function Toast({ toast, onRemove }) {
     </div>
   );
 }
+
+// Memoize Toast component to prevent re-render when sibling toasts change
+const MemoizedToast = React.memo(Toast);
+
+export default ToastProvider;

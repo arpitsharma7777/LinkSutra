@@ -1,10 +1,13 @@
 /**
  * Centralized API Client for LinkSutra Frontend
- * Provides request/response interceptors, error handling, and timeouts
+ * Provides request/response interceptors, error handling, timeouts, and deduplication
  */
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const REQUEST_TIMEOUT = 10000; // 10 seconds
+
+// Track in-flight requests to prevent duplicates
+const inFlightRequests = new Map();
 
 /**
  * Custom error class for API errors

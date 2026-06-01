@@ -116,3 +116,5 @@ function Modal({ modal }) {
     </div>
   );
 }
+
+export default React.memo(ModalProvider);

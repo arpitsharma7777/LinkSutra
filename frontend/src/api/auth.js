@@ -1,5 +1,19 @@
 const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
+// Helper to extract clean error messages from FastAPI's 422 array structure
+function getErrorMessage(data, defaultMsg) {
+  if (!data || !data.detail) return defaultMsg;
+  if (typeof data.detail === "string") return data.detail;
+  if (Array.isArray(data.detail)) {
+    return data.detail.map(err => {
+      const field = err.loc ? err.loc[err.loc.length - 1] : "";
+      const fieldName = field ? field.charAt(0).toUpperCase() + field.slice(1) : "";
+      return `${fieldName ? fieldName + ": " : ""}${err.msg}`;
+    }).join(", ");
+  }
+  return JSON.stringify(data.detail) || defaultMsg;
+}
+
 // ── Auth ──────────────────────────────────────────────────────
 export async function loginUser(email, password) {
   const formData = new URLSearchParams();
@@ -11,7 +25,7 @@ export async function loginUser(email, password) {
     body: formData.toString(),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || "Login failed");
+  if (!res.ok) throw new Error(getErrorMessage(data, "Login failed"));
   return data;
 }
 
@@ -22,7 +36,7 @@ export async function registerUser(username, email, password, displayName) {
     body: JSON.stringify({ username, email, password, display_name: displayName }),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || "Registration failed");
+  if (!res.ok) throw new Error(getErrorMessage(data, "Registration failed"));
   return data;
 }
 
@@ -31,7 +45,7 @@ export async function getCurrentUser(token) {
     headers: { Authorization: `Bearer ${token}` },
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || "Failed to get user");
+  if (!res.ok) throw new Error(getErrorMessage(data, "Failed to get user"));
   return data;
 }
 
@@ -41,7 +55,7 @@ export async function getUserLinks(token) {
     headers: { Authorization: `Bearer ${token}` },
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || "Failed to get links");
+  if (!res.ok) throw new Error(getErrorMessage(data, "Failed to get links"));
   return data;
 }
 
@@ -55,7 +69,7 @@ export async function createLink(token, title, url, icon) {
     body: JSON.stringify({ title, url, icon }),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || "Failed to create link");
+  if (!res.ok) throw new Error(getErrorMessage(data, "Failed to create link"));
   return data;
 }
 
@@ -69,7 +83,7 @@ export async function updateLink(token, linkId, fields) {
     body: JSON.stringify(fields),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || "Failed to update link");
+  if (!res.ok) throw new Error(getErrorMessage(data, "Failed to update link"));
   return data;
 }
 
@@ -80,7 +94,7 @@ export async function deleteLink(token, linkId) {
   });
   if (!res.ok) {
     const data = await res.json();
-    throw new Error(data.detail || "Failed to delete link");
+    throw new Error(getErrorMessage(data, "Failed to delete link"));
   }
   return true;
 }
@@ -132,7 +146,6 @@ export async function updateUserProfile(token, updates) {
     body: JSON.stringify(updates),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.detail || "Failed to update profile");
+  if (!res.ok) throw new Error(getErrorMessage(data, "Failed to update profile"));
   return data;
 }
-
