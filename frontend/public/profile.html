@@ -6,66 +6,66 @@
   <title>LinkSutra — Profile</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── CSS Variables — Themes ───────────────────────────── */
+    /* ── CSS Variables — Redesigned Curated Themes ────────── */
     :root {
-      --bg:          #F7F5F2;
-      --surface:     #FFFFFF;
-      --border:      #E8E4DF;
-      --text-primary:#1A1614;
-      --text-secondary:#7A716B;
-      --accent:      #2D2926;
-      --accent-soft: #F0EDE8;
-      --link-hover:  #1A1614;
-      --shadow:      0 2px 4px rgba(0,0,0,0.07);
-      --shadow-hover:0 6px 8px rgba(0,0,0,0.13);
-      --avatar-border:#E8E4DF;
-      --btn-bg:      #FFFFFF;
-      --btn-text:    #1A1614;
-      --btn-border:  #D8D2CB;
+      --bg:          #f3f3f1;
+      --surface:     #ffffff;
+      --border:      rgba(0, 0, 0, 0.08);
+      --text-primary:#1e2330;
+      --text-secondary:#6b7280;
+      --accent:      #254f1a;
+      --accent-soft: rgba(0, 0, 0, 0.04);
+      --link-hover:  #1e2330;
+      --shadow:      0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --shadow-hover:0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --avatar-border:rgba(0, 0, 0, 0.08);
+      --btn-bg:      #ffffff;
+      --btn-text:    #1e2330;
+      --btn-border:  rgba(0, 0, 0, 0.08);
     }
 
     [data-theme="dark"] {
-      --bg:          #0E0E10;
-      --surface:     #1A1A1E;
-      --border:      #2A2A30;
-      --text-primary:#F0EDE8;
-      --text-secondary:#7A7680;
-      --accent:      #E8E4DF;
-      --accent-soft: #1E1E24;
-      --link-hover:  #FFFFFF;
-      --shadow:      0 2px 4px rgba(0,0,0,0.4);
-      --shadow-hover:0 6px 8px rgba(0,0,0,0.6);
-      --avatar-border:#2A2A30;
-      --btn-bg:      #1A1A1E;
-      --btn-text:    #F0EDE8;
-      --btn-border:  #2A2A30;
+      --bg:          #0b0b0f;
+      --surface:     #1e2330;
+      --border:      rgba(255, 255, 255, 0.06);
+      --text-primary:#ffffff;
+      --text-secondary:#9ca3af;
+      --accent:      #d2e823;
+      --accent-soft: rgba(255, 255, 255, 0.08);
+      --link-hover:  #ffffff;
+      --shadow:      0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-hover:0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      --avatar-border:rgba(255, 255, 255, 0.08);
+      --btn-bg:      #1e2330;
+      --btn-text:    #ffffff;
+      --btn-border:  rgba(255, 255, 255, 0.08);
     }
 
     [data-theme="colorful"] {
-      --bg:          #FFF8F0;
-      --surface:     #FFFFFF;
-      --border:      #FFD9B3;
-      --text-primary:#1A0A00;
-      --text-secondary:#9B6A3A;
-      --accent:      #E05C1A;
-      --accent-soft: #FFF0E0;
-      --link-hover:  #C04A0E;
-      --shadow:      0 2px 4px rgba(224,92,26,0.10);
-      --shadow-hover:0 6px 8px rgba(224,92,26,0.22);
-      --avatar-border:#FFD9B3;
-      --btn-bg:      #FFFFFF;
-      --btn-text:    #1A0A00;
-      --btn-border:  #FFD9B3;
+      --bg:          linear-gradient(135deg, #502274, #780016);
+      --surface:     rgba(255, 255, 255, 0.08);
+      --border:      rgba(255, 255, 255, 0.1);
+      --text-primary:#ffffff;
+      --text-secondary:#e9c0e9;
+      --accent:      #d2e823;
+      --accent-soft: rgba(255, 255, 255, 0.12);
+      --link-hover:  #ffffff;
+      --shadow:      0 4px 6px -1px rgba(0, 0, 0, 0.15);
+      --shadow-hover:0 10px 15px -3px rgba(0, 0, 0, 0.25);
+      --avatar-border:rgba(255, 255, 255, 0.12);
+      --btn-bg:      rgba(255, 255, 255, 0.1);
+      --btn-text:    #ffffff;
+      --btn-border:  rgba(255, 255, 255, 0.12);
     }
 
     /* ── Reset ───────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text-primary);
       min-height: 100vh;
@@ -144,14 +144,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'DM Serif Display', serif;
+      font-family: 'Outfit', sans-serif;
       font-size: 48px;
       color: var(--text-secondary);
       transition: border-color 0.35s, background 0.35s;
     }
 
     .display-name {
-      font-family: 'DM Serif Display', serif;
+      font-family: 'Outfit', sans-serif;
       font-size: 26px;
       font-weight: 400;
       color: var(--text-primary);
@@ -419,7 +419,7 @@
       padding: 80px 20px;
     }
     .not-found h1 {
-      font-family: 'DM Serif Display', serif;
+      font-family: 'Outfit', sans-serif;
       font-size: 48px;
       color: var(--text-secondary);
       margin-bottom: 8px;

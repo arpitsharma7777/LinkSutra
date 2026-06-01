@@ -12,7 +12,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     display_name = Column(String(100), nullable=True)
     bio          = Column(String(500), nullable=True)
-    avatar_url   = Column(String(2048), nullable=True)
+    avatar_url   = Column(Text, nullable=True)
     created_at   = Column(DateTime, default=datetime.utcnow)
 
     # Relationship — User ke saare links

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "../styles/PublicProfile.css";
 
@@ -9,7 +9,12 @@ function PublicProfile() {
   const [error, setError] = useState(null);
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem("ls_theme") || "minimal");
 
-  const API = "http://127.0.0.1:8000";
+  // Dynamic production-ready API resolution matching vanilla profile template
+  const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:8000'
+    : window.location.hostname.includes('onrender.com')
+      ? window.location.hostname.replace('frontend', 'backend').replace(/^/, `${window.location.protocol}//`)
+      : 'https://linksutra-backend.onrender.com';
 
   const ICON_MAP = {
     youtube: "▶️",
@@ -85,13 +90,13 @@ function PublicProfile() {
     if (username) {
       fetchProfile();
     }
-  }, [username]);
+  }, [username, API]);
 
   const THEMES = ["minimal", "dark", "colorful"];
 
   if (error && !profileData) {
     return (
-      <div className="page">
+      <div className="profile-page-view">
         <div className="theme-bar">
           {THEMES.map((t) => (
             <button
@@ -102,7 +107,7 @@ function PublicProfile() {
             ></button>
           ))}
         </div>
-        <div className="not-found">
+        <div className="not-found-card glass-panel">
           <h1>404</h1>
           <p>@{username} — profile not found.</p>
         </div>
@@ -112,7 +117,7 @@ function PublicProfile() {
 
   if (loading) {
     return (
-      <div className="page">
+      <div className="profile-page-view">
         <div className="theme-bar">
           {THEMES.map((t) => (
             <button
@@ -129,20 +134,14 @@ function PublicProfile() {
           <div className="skeleton skeleton-line" style={{ width: "80px", height: "10px" }}></div>
           <div className="skeleton skeleton-line" style={{ width: "220px", height: "10px", marginTop: "14px" }}></div>
         </div>
-        <div style={{ display: "flex", justifyContent: "center", gap: "12px", margin: "24px 0" }}>
+        <div className="skeleton-socials-row">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="skeleton" style={{ width: "48px", height: "48px", borderRadius: "50%" }}></div>
+            <div key={i} className="skeleton skeleton-circle"></div>
           ))}
         </div>
-        <div className="action-buttons">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="skeleton skeleton-link"></div>
-          ))}
-        </div>
-        <div className="divider"></div>
         <div className="links-list">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="skeleton skeleton-link"></div>
+            <div key={i} className="skeleton skeleton-link-card"></div>
           ))}
         </div>
       </div>
@@ -151,7 +150,7 @@ function PublicProfile() {
 
   if (!profileData) {
     return (
-      <div className="page">
+      <div className="profile-page-view">
         <div className="theme-bar">
           {THEMES.map((t) => (
             <button
@@ -162,7 +161,7 @@ function PublicProfile() {
             ></button>
           ))}
         </div>
-        <div className="state-msg">
+        <div className="error-card glass-panel">
           <span className="emoji">⚠️</span>Could not load profile.
           <br />
           Make sure the backend is running.
@@ -178,7 +177,7 @@ function PublicProfile() {
   const initials = (profileData.display_name || profileData.username)[0].toUpperCase();
 
   return (
-    <div className="page">
+    <div className="profile-page-view">
       <div className="theme-bar">
         {THEMES.map((t) => (
           <button
@@ -244,32 +243,32 @@ function PublicProfile() {
           links.map((link) => (
             <div
               key={link.id}
-              className="link-item"
+              className="link-item-card"
               onClick={() => trackClick(link.id, link.url)}
             >
               <div className="link-left">
-                <div className="link-icon">{getIcon(link.title, link.url)}</div>
-                <div>
-                  <div className="link-title">{link.title}</div>
-                  <div className="link-url">{cleanUrl(link.url)}</div>
+                <div className="link-icon-circle">{getIcon(link.title, link.url)}</div>
+                <div className="link-details">
+                  <div className="link-title-text">{link.title}</div>
+                  <div className="link-url-text">{cleanUrl(link.url)}</div>
                 </div>
               </div>
               <span className="link-arrow">→</span>
             </div>
           ))
         ) : (
-          <div className="state-msg">
+          <div className="empty-links-card glass-panel">
             <span className="emoji">🔗</span>No links added yet.
           </div>
         )}
       </div>
 
-      <div className="footer">
-        <a href="/" title="Powered by LinkSutra">
+      <div className="profile-footer">
+        <Link to="/" title="Powered by LinkSutra">
           <span className="footer-dot"></span>
           LinkSutra
           <span className="footer-dot"></span>
-        </a>
+        </Link>
       </div>
     </div>
   );

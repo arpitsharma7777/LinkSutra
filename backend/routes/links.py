@@ -25,7 +25,7 @@ def create_link(
 
     new_link = Link(
         title=link.title,
-        url=link.url,
+        url=str(link.url),
         icon=link.icon,
         is_active=True,
         order_index=(
@@ -115,7 +115,7 @@ def update_link(
         link.title = link_update.title
 
     if link_update.url is not None:
-        link.url = link_update.url
+        link.url = str(link_update.url)
 
     if link_update.icon is not None:
         link.icon = link_update.icon

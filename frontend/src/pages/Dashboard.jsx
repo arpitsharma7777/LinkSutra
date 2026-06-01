@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserLinks, createLink, updateLink, deleteLink } from "../api/auth";
 import { useToast } from "../components/ToastNotification";
@@ -86,6 +86,7 @@ function DashboardContent({
   showConfirmModal,
   setToken,
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   const {
     showAddForm,
     setShowAddForm,
@@ -347,35 +348,47 @@ function DashboardContent({
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="logo">LinkSutra</div>
-        <nav className="sidebar-nav">
-          <div className="nav-item active" onClick={() => navigate('/dashboard')}>
-            <span className="nav-icon">🔗</span>
-            Links
-          </div>
-          <div className="nav-item" onClick={() => navigate('/analytics')}>
-            <span className="nav-icon">📊</span>
-            Analytics
-          </div>
-          <div className="nav-item" onClick={() => navigate('/settings')}>
-            <span className="nav-icon">⚙️</span>
-            Settings
-          </div>
-          <div className="nav-item">
-            <span className="nav-icon">❓</span>
-            Support
-          </div>
-        </nav>
+        
+        {/* Mobile menu hamburger toggle button */}
+        <button 
+          className="mobile-menu-toggle" 
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
 
-        <div className="sidebar-bottom">
-          <button className="export-btn" onClick={handleExportHTML}>
-            <span>📤</span> Export HTML
-          </button>
-          <button className="export-btn" onClick={handleExportJSON}>
-            <span>📥</span> Export JSON
-          </button>
-          <button className="logout-btn" onClick={handleLogout}>
-            <span>🚪</span> Logout
-          </button>
+        <div className={`sidebar-menu-wrapper ${menuOpen ? "open" : ""}`}>
+          <nav className="sidebar-nav">
+            <div className="nav-item active" onClick={() => { navigate('/dashboard'); setMenuOpen(false); }}>
+              <span className="nav-icon">🔗</span>
+              Links
+            </div>
+            <div className="nav-item" onClick={() => { navigate('/analytics'); setMenuOpen(false); }}>
+              <span className="nav-icon">📊</span>
+              Analytics
+            </div>
+            <div className="nav-item" onClick={() => { navigate('/settings'); setMenuOpen(false); }}>
+              <span className="nav-icon">⚙️</span>
+              Settings
+            </div>
+            <div className="nav-item">
+              <span className="nav-icon">❓</span>
+              Support
+            </div>
+          </nav>
+
+          <div className="sidebar-bottom">
+            <button className="export-btn" onClick={() => { handleExportHTML(); setMenuOpen(false); }}>
+              <span>📤</span> Export HTML
+            </button>
+            <button className="export-btn" onClick={() => { handleExportJSON(); setMenuOpen(false); }}>
+              <span>📥</span> Export JSON
+            </button>
+            <button className="logout-btn" onClick={() => { handleLogout(); setMenuOpen(false); }}>
+              <span>🚪</span> Logout
+            </button>
+          </div>
         </div>
       </aside>
 

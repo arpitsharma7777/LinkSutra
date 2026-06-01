@@ -101,7 +101,7 @@ def update_profile(
     if user_update.bio is not None:
         current_user.bio = user_update.bio
     if user_update.avatar_url is not None:
-        current_user.avatar_url = user_update.avatar_url
+        current_user.avatar_url = str(user_update.avatar_url)
 
     db.commit()
     db.refresh(current_user)

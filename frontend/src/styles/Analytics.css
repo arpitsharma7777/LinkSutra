@@ -1,56 +1,274 @@
+@import "./design_tokens.css";
+@import "./Dashboard.css"; /* Inherit shared sidebar styles */
+
 .analytics-container {
   display: flex;
-  background-color: #121212;
-  color: #fff;
   min-height: 100vh;
-  font-family: sans-serif;
+  background-color: var(--neutral-900);
+  font-family: var(--font-body);
+  color: #ffffff;
+  box-sizing: border-box;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 220px;
-  padding: 30px 20px;
-  border-right: 1px solid #222;
+.analytics-main {
+  flex-grow: 1;
+  padding: 48px 40px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.copy-summary-btn {
+  background-color: var(--lt-purple);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
+  padding: 12px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+.copy-summary-btn:hover {
+  background-color: #652d91;
+  transform: translateY(-1px);
+}
+
+.time-filter {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-full);
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--neutral-300);
+  letter-spacing: 0.5px;
+}
+
+.analytics-body {
   display: flex;
   flex-direction: column;
+  gap: 24px;
 }
 
-.logo { font-size: 20px; font-weight: bold; margin-bottom: 40px; }
-.nav-item { padding: 12px; color: #fbfafa; cursor: pointer; }
-
-.sidebar-bottom { margin-top: auto; }
-.add-new-btn { width: 100%; padding: 10px; border-radius: 20px; border: 1px solid #444; background: transparent; color: white; margin-bottom: 15px; cursor: pointer; }
-.logout { color: #777; font-size: 14px; padding-left: 10px; }
-
-/* Main Content */
-.analytics-main { flex: 1; padding: 40px 60px; }
-.analytics-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-.page-title { font-size: 36px; font-family: serif; margin: 0; color: darkorange; }
-.time-filter { color: #ff8a65; font-size: 12px; font-weight: bold; }
-
-/* Metrics */
-.metrics-row { display: flex; border-top: 1px solid  #f76504; border-bottom: 1px solid  #f76504;; padding: 30px 0; margin-bottom: 40px; }
-.metric-card { flex: 1; padding: 0 20px; }
-.metric-card.divider { border-left: 1px solid  #f76504;; }
-.metric-value { font-size: 32px; display: block; }
-.metric-change { font-size: 12px; color: #f76504; }
-
-/* Graph Area */
-.graph-section { margin-bottom: 40px; }
-.graph-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.live-view { font-size: 10px; color: #777; border-left: 2px solid #2563eb; padding-left: 5px; }
-.graph-placeholder { height: 200px; border-bottom: 1px solid #333; position: relative; overflow: hidden; }
-.wave-line { 
-  width: 100%; height: 100%; 
-  border-top: 2px solid #2563eb; 
-  border-radius: 50% 50% 0 0; /* Simple curve representation */
-  position: absolute; top: 100px;
+/* ─── METRICS CARDS ROW ─── */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
 }
-.graph-labels { display: flex; justify-content: space-between; padding-top: 10px; color: #555; font-size: 11px; }
 
-/* Destinations */
-.destinations-section h3 { font-size: 18px; margin-bottom: 20px; }
-.dest-item { background: #1c1c1c; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
-.dest-info { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; }
-.progress-bar { background: #333; height: 6px; border-radius: 3px; }
-.progress { background: #f76504; height: 100%; border-radius: 3px; }
+.metric-card {
+  background-color: var(--neutral-800);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+  transition: var(--transition-normal);
+}
+.metric-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.metric-value {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.metric-change {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--neutral-400);
+  letter-spacing: 0.5px;
+}
+
+/* ─── GRAPH traffic momentum ─── */
+.graph-section {
+  background-color: var(--neutral-800);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-xl);
+  padding: 32px 40px 48px;
+  box-sizing: border-box;
+}
+
+.graph-header {
+  margin-bottom: 32px;
+}
+.graph-header h2 {
+  margin: 0 0 4px;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+}
+.graph-sub {
+  font-size: 13px;
+  color: var(--neutral-400);
+}
+
+.graph-placeholder {
+  position: relative;
+  height: 240px;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
+/* horizontal bar alignment inside graphs */
+.graph-placeholder .bar-chart-mockup {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 100%;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 0 20px 8px;
+  box-sizing: border-box;
+}
+
+.graph-placeholder .bar-col {
+  position: relative;
+  width: 40px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 6px 6px 0 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.graph-placeholder .bar-col:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.graph-placeholder .bar-col.active {
+  background-color: var(--lt-green);
+  box-shadow: 0 0 20px rgba(210, 232, 35, 0.15);
+}
+
+.graph-placeholder .bar-col.active .bar-label {
+  color: var(--lt-green);
+  font-weight: 800;
+}
+
+.graph-placeholder .bar-label {
+  position: absolute;
+  bottom: -36px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--neutral-400);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ─── TOP PERFORMING DESTINATIONS ─── */
+.destinations-section {
+  background-color: var(--neutral-800);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-xl);
+  padding: 32px 40px;
+  box-sizing: border-box;
+}
+
+.destinations-section h2 {
+  margin: 0 0 24px;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.dest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dest-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dest-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+.dest-title {
+  color: #ffffff;
+  font-weight: 600;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dest-clicks {
+  color: var(--lt-pink);
+  font-weight: 700;
+}
+
+.progress-bar-bg {
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--lt-green);
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease-out;
+}
+
+.no-data-msg {
+  text-align: center;
+  padding: 40px;
+  color: var(--neutral-500);
+  font-size: 14px;
+}
+
+/* Analytics Mobile-specific overrides */
+@media (max-width: 767px) {
+  .graph-section,
+  .destinations-section {
+    padding: 24px 20px !important;
+    border-radius: var(--radius-lg) !important;
+  }
+  
+  .graph-header {
+    margin-bottom: 24px !important;
+  }
+  
+  .graph-placeholder {
+    height: 180px !important; /* Shorter graph height on small screens */
+    margin-bottom: 24px !important;
+  }
+  
+  .graph-placeholder .bar-chart-mockup {
+    padding: 0 10px 8px !important;
+  }
+  
+  .graph-placeholder .bar-col {
+    width: 24px !important; /* Narrower columns to avoid horizontal overflow */
+    border-radius: 4px 4px 0 0 !important;
+  }
+  
+  .graph-placeholder .bar-label {
+    bottom: -30px !important;
+    font-size: 9px !important;
+  }
+}

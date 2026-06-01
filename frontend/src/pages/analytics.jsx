@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTotalClicks, getDailyAnalytics, getLinkAnalytics, getTopLink } from '../api/auth';
 import '../styles/Analytics.css';
@@ -11,7 +11,8 @@ const Analytics = ({ setToken }) => {
   const [linkAnalytics, setLinkAnalytics] = useState([]);
   const [topLink, setTopLink] = useState(null);
   const [avgPerDay, setAvgPerDay] = useState(0);
-  const [copied, setCopied] = useState(false);  // ← ADD
+  const [copied, setCopied] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -45,13 +46,12 @@ const Analytics = ({ setToken }) => {
     fetchAnalytics();
   }, [navigate]);
 
-  function handleLogout() {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
     setToken(null);
     navigate("/");
-  }
+  }, [setToken, navigate]);
 
-  // ── COPY FUNCTION ──────────────────────────────  ← ADD
   const copyAnalyticsSummary = () => {
     const username = localStorage.getItem("username") || "your-profile";
 
@@ -81,117 +81,138 @@ Generated: ${new Date().toLocaleDateString("en-IN")}
 
   return (
     <div className="analytics-container">
-      {/* Sidebar */}
+      {/* Sidebar Navigation */}
       <aside className="sidebar">
         <div className="logo">LinkSutra</div>
-        <nav>
-          <div className="nav-item" onClick={() => navigate('/dashboard')}>Links</div>
-          <div className="nav-item active" onClick={() => navigate('/analytics')}>Analytics</div>
-          <div className="nav-item">Settings</div>
-          <div className="nav-item">Support</div>
-        </nav>
-        <button className="logout-btn" onClick={handleLogout} style={{
-          marginTop: '20px',
-          width: '100%',
-          padding: '10px',
-          backgroundColor: '#f77504',
-          color: 'white',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: 'pointer'
-        }}>
-          LOGOUT
+        
+        {/* Mobile menu hamburger toggle button */}
+        <button 
+          className="mobile-menu-toggle" 
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+        >
+          {menuOpen ? "✕" : "☰"}
         </button>
+
+        <div className={`sidebar-menu-wrapper ${menuOpen ? "open" : ""}`}>
+          <nav className="sidebar-nav">
+            <div className="nav-item" onClick={() => { navigate('/dashboard'); setMenuOpen(false); }}>
+              <span className="nav-icon">🔗</span>
+              Links
+            </div>
+            <div className="nav-item active" onClick={() => { navigate('/analytics'); setMenuOpen(false); }}>
+              <span className="nav-icon">📊</span>
+              Analytics
+            </div>
+            <div className="nav-item" onClick={() => { navigate('/settings'); setMenuOpen(false); }}>
+              <span className="nav-icon">⚙️</span>
+              Settings
+            </div>
+            <div className="nav-item">
+              <span className="nav-icon">❓</span>
+              Support
+            </div>
+          </nav>
+
+          <div className="sidebar-bottom">
+            <button className="logout-btn" onClick={() => { handleLogout(); setMenuOpen(false); }}>
+              <span>🚪</span> Logout
+            </button>
+          </div>
+        </div>
       </aside>
 
       {/* Main Content */}
       <main className="analytics-main">
-
-        {/* ── HEADER WITH COPY BUTTON ── */}
+        {/* Header with copy summary btn */}
         <header className="analytics-header">
-          <h1 className="page-title">Analytics</h1>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="header-left">
+            <span className="workspace-label">METRICS</span>
+            <h1 className="page-title">Performance Insights</h1>
+          </div>
+          <div className="header-right">
             <div className="time-filter">LAST 7 DAYS</div>
             <button
               onClick={copyAnalyticsSummary}
               disabled={loading}
-              style={{
-                background: copied ? "#EAF3DE" : "#3C3489",
-                color: copied ? "#27500A" : "#EEEDFE",
-                border: "none",
-                borderRadius: "8px",
-                padding: "8px 16px",
-                fontSize: "12px",
-                fontWeight: "500",
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.6 : 1,
-                transition: "all 0.2s"
-              }}
+              className="copy-summary-btn"
             >
-              {copied ? "✓ Copied!" : "Copy Summary"}
+              {copied ? "✓ Copied Summary" : "Copy Summary"}
             </button>
           </div>
         </header>
 
-        {/* Top Metrics Row */}
-        <section className="metrics-row">
-          <div className="metric-card">
-            <span className="metric-value">{loading ? '...' : totalClicks.toLocaleString()}</span>
-            <span className="metric-change">TOTAL CLICKS</span>
-          </div>
-          <div className="metric-card">
-            <span className="metric-value">{loading ? '...' : Math.ceil(totalClicks * 0.5)}</span>
-            <span className="metric-change">UNIQUE VISITORS</span>
-          </div>
-          <div className="metric-card">
-            <span className="metric-value">{loading ? '...' : topLink?.title || 'N/A'}</span>
-            <span className="metric-change">TOP LINKS</span>
-          </div>
-          <div className="metric-card">
-            <span className="metric-value">{loading ? '...' : avgPerDay}</span>
-            <span className="metric-change">AVG PER DAY</span>
-          </div>
-        </section>
+        {loading ? (
+          <div className="loading">Loading analytics metrics...</div>
+        ) : (
+          <div className="analytics-body">
+            {/* Top Metrics Row */}
+            <section className="metrics-row">
+              <div className="metric-card glass-panel">
+                <span className="metric-value">{totalClicks.toLocaleString()}</span>
+                <span className="metric-change">TOTAL CLICKS</span>
+              </div>
+              <div className="metric-card glass-panel">
+                <span className="metric-value">{Math.ceil(totalClicks * 0.5)}</span>
+                <span className="metric-change">UNIQUE VISITORS</span>
+              </div>
+              <div className="metric-card glass-panel">
+                <span className="metric-value">{topLink?.title || 'N/A'}</span>
+                <span className="metric-change">TOP PERFORMING LINK</span>
+              </div>
+              <div className="metric-card glass-panel">
+                <span className="metric-value">{avgPerDay}</span>
+                <span className="metric-change">AVG CLICKS PER DAY</span>
+              </div>
+            </section>
 
-        {/* Graph Section */}
-        <section className="graph-section">
-          <div className="graph-header">
-            <h2>Traffic Momentum</h2>
-          </div>
-          <div className="graph-placeholder">
-            <div className="wave-line"></div>
-          </div>
-          <div className="graph-labels">
-            <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
-          </div>
-        </section>
-
-        {/* Top Performing Destinations */}
-        <section className="destinations-section">
-          <h2>Top Performing Destinations</h2>
-          {loading ? (
-            <p>Loading...</p>
-          ) : linkAnalytics && linkAnalytics.length > 0 ? (
-            linkAnalytics.slice(0, 5).map((link) => {
-              const maxClicks = linkAnalytics[0]?.click_count || 1;
-              const percentage = Math.round((link.click_count / maxClicks) * 100);
-              return (
-                <div key={link.link_id} className="dest-item">
-                  <div className="dest-info">
-                    <span title={link.url}>{link.title || link.url}</span>
-                    <span>{link.click_count} Clicks</span>
-                  </div>
-                  <div className="progress-bar">
-                    <div className="progress" style={{ width: `${percentage}%` }}></div>
-                  </div>
+            {/* Graph Visualization */}
+            <section className="graph-section glass-panel">
+              <div className="graph-header">
+                <h2>Traffic Momentum</h2>
+                <span className="graph-sub">Clicks registered per day</span>
+              </div>
+              <div className="graph-placeholder">
+                <div className="wave-line-vector"></div>
+                <div className="bar-chart-mockup">
+                  <div className="bar-col" style={{ height: '30%' }}><span className="bar-label">MON</span></div>
+                  <div className="bar-col" style={{ height: '55%' }}><span className="bar-label">TUE</span></div>
+                  <div className="bar-col" style={{ height: '45%' }}><span className="bar-label">WED</span></div>
+                  <div className="bar-col" style={{ height: '75%' }}><span className="bar-label">THU</span></div>
+                  <div className="bar-col active" style={{ height: '90%' }}><span className="bar-label">FRI</span></div>
+                  <div className="bar-col" style={{ height: '60%' }}><span className="bar-label">SAT</span></div>
+                  <div className="bar-col" style={{ height: '50%' }}><span className="bar-label">SUN</span></div>
                 </div>
-              );
-            })
-          ) : (
-            <p>No data available yet.</p>
-          )}
-        </section>
+              </div>
+            </section>
 
+            {/* Top Performing Destinations list */}
+            <section className="destinations-section glass-panel">
+              <h2>Top Performing Destinations</h2>
+              <div className="dest-list">
+                {linkAnalytics && linkAnalytics.length > 0 ? (
+                  linkAnalytics.slice(0, 5).map((link) => {
+                    const maxClicks = linkAnalytics[0]?.click_count || 1;
+                    const percentage = Math.round((link.click_count / maxClicks) * 100);
+                    return (
+                      <div key={link.link_id} className="dest-item">
+                        <div className="dest-info">
+                          <span className="dest-title" title={link.url}>{link.title || link.url}</span>
+                          <span className="dest-clicks">{link.click_count} Clicks</span>
+                        </div>
+                        <div className="progress-bar-bg">
+                          <div className="progress-fill" style={{ width: `${percentage}%` }}></div>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="no-data-msg">No click data registered yet.</p>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
       </main>
     </div>
   );

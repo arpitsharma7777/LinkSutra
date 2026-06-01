@@ -38,7 +38,19 @@ class UserResponse(BaseModel):
 class UserUpdate(BaseModel):
     display_name: Optional[str] = Field(None, max_length=100, description="Max 100 characters")
     bio: Optional[str] = Field(None, max_length=500, description="Max 500 characters")
-    avatar_url: Optional[AnyHttpUrl] = Field(None, description="Must be a valid HTTP(S) URL")
+    avatar_url: Optional[str] = Field(None, description="Must be a valid HTTP(S) URL or local image Base64 data URI")
+
+    @field_validator('avatar_url')
+    @classmethod
+    def validate_avatar_url(cls, v):
+        if v is not None and v.strip() != "":
+            val = v.strip()
+            if val.startswith(('http://', 'https://')):
+                return val
+            if val.startswith('data:image/'):
+                return val
+            raise ValueError('Avatar URL must be a valid HTTP(S) URL or a local image Base64 data URI')
+        return v
 
     class Config:
         from_attributes = True
