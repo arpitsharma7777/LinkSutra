@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import update, case
@@ -8,7 +8,6 @@ from database import get_db
 from models import Link, User, AnalyticsEvent
 from schemas import LinkCreate, LinkUpdate, LinkResponse, PublicProfile
 from dependencies import get_current_user
-from fastapi.responses import JSONResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
@@ -156,7 +155,7 @@ def delete_link(
 #--------Public Profile---------------------------------------------------------------------------------------------
 
 @router.get("/profile/{username}", response_model=PublicProfile)
-def public_profile(username: str, db: Session = Depends(get_db)):
+def public_profile(username: str, response: Response, db: Session = Depends(get_db)):
 
     user = db.query(User).filter(User.username == username).first()
 
@@ -188,14 +187,11 @@ def public_profile(username: str, db: Session = Depends(get_db)):
         "action_buttons": []
     }
     
-    # Create response with caching headers
-    return JSONResponse(
-        content=response_data,
-        headers={
-            "Cache-Control": "public, max-age=3600",  # 1 hour cache
-            "ETag": f'"{hash(f"{user.id}-{len(links)}")}\"'  # Cheap etag
-        }
-    )
+    # Set caching headers on response object
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    response.headers["ETag"] = f'"{hash(f"{user.id}-{len(links)}")}"'
+    
+    return response_data
     #-------Click Tracking + Redirect--------------------------------------------------------------------------------------------
   
 @router.get("/{link_id}/click")
